@@ -1,4 +1,3 @@
-
 #include "Medidas.h"
 
  
@@ -10,11 +9,16 @@ void IRAM_ATTR onTimer() {
 }
  
 void initTimer() {
-
+  interruptCounter1s = 0; 
   timer = timerBegin(0, 80, true);
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, 1000000, true);
   timerAlarmEnable(timer);
+}
+void initTimer2() {
+  interruptCounter1s = 0; 
+  Counter1Min=0;
+  Counter1Hour=0;
 }
  
 void timerRefresh() {

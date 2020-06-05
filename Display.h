@@ -1,7 +1,7 @@
 #ifndef __MURINOS__HEADER__
 #define __MURINOS__HEADER__
 
-#include <Adafruit_GFX.h> 
+#include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
 
 #include <Fonts/FreeSans9pt7b.h>
@@ -13,6 +13,7 @@
 #include <Fonts/FreeSansBold18pt7b.h>
 #include <Fonts/FreeSansBold24pt7b.h>
 #include <Fonts/FreeSerif12pt7b.h>
+#include <Fonts/FreeSerif18pt7b.h>
 #include <Fonts/FreeSerifBold9pt7b.h>
 #include <Fonts/FreeSerifBold12pt7b.h>
 #include <Fonts/FreeSerifBold18pt7b.h>
@@ -28,7 +29,12 @@
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 #define LBLUE   0x7E7E
-
+#define LGREEN  0XBFCF
+#define KHAKI   0xF0E68C
+#define GREY    0xFF6347
+#define TOMATO  tft.color565(255, 69, 0)
+#define GELO    tft.color565(240, 255, 240)
+#define DBLUE   tft.color565(0, 0, 31)
 #define TFT_MINX 10
 #define TFT_MINY 10
 #define TFT_MAXX 469
@@ -37,27 +43,27 @@
 
 #include "Display.h"
 #include "Medidas.h"
-
 MCUFRIEND_kbv tft;
 
-
-int CURSOR;
-int PLAY;
-int menu;
-
-
-void showAbertura();
-void menuprincipal();
+// Funções de Menus
+void Abertura();
 void menuPrincipal();
-void menuTCFM();
-void menuTFA();
-
+void menuGenerico();
+int menuTFA();
+void changeMenu();
+void printaparar();
+void printabotao(int posicao);
+void printaopcoes(int posicao);
 // funcoes display
 // ================
 
+void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *txt, const char *msg);
 void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *msg);
+void showint(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
 void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
 unsigned long Lines(uint16_t color);
 void ShowTempo();
+void showVelocidade(int vel);
+void ShowTempoTFA(long temp);
 
 #endif
