@@ -4,14 +4,18 @@ int menuTFA()
   if (primeiravez)
   {
     tft.fillScreen(KHAKI);
-    showmsg(70, 50, 1, BLACK, &FreeSerifBold24pt7b, "Configurar TFA");
+    tft.drawRoundRect(55, 15, 365, 60, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(56, 16, 363, 58, 8, LGREEN);
+    showmsg(70, 60, 1, BLACK, &FreeSerifBold24pt7b, "Configurar TFA");
     tft.drawRoundRect(305, 105, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
     tft.fillRoundRect(306, 106, 158, 53, 8, GELO);
     tft.drawRoundRect(305, 175, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
     tft.fillRoundRect(306, 176, 158, 53, 8, GELO);
-    showVelocidade(0);
-    ShowTempoTFA(0);
-    primeiravez = 0;
+    showVelocidadeDefinida(362,145, 0);
+    primeiravez = ON;
+    ShowTempoTFA();
+    primeiravez = ON;
+    primeiravez = OFF;
   }
 }
 void mudatfa()
@@ -22,16 +26,16 @@ void mudatfa()
   if (pos != newPos)
   {
     //Limite maximo menu
-    if (newPos > 3)
+    if (newPos > confirma)
     {
-      encoder.setPosition(1);
-      newPos = 1;
+      encoder.setPosition(changevelocidade);
+      newPos = changevelocidade;
     }
     //Limite minimo menu
-    if (newPos < 1)
+    if (newPos < changevelocidade)
     {
-      encoder.setPosition(3);
-      newPos = 3;
+      encoder.setPosition(confirma);
+      newPos = confirma;
     }
     pos = newPos;
     printabotaotfa(newPos);
@@ -39,119 +43,138 @@ void mudatfa()
 }
 void mudavelocidade()
 {
+  static RotaryEncoder::Direction lastMovementDirection = RotaryEncoder::Direction::NOROTATION;
   //Lê a posição do encoder e compara com a anterior
   encoder.tick();
-  newvelo = encoder.getPosition();
-  if (velo != newvelo)
+  NEWTEMPOTOTAL = TEMPOTOTAL;
+  RotaryEncoder::Direction currentDirection = encoder.getDirection();
+  if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
   {
-    //Limite maximo menu
-    if (newvelo > 50)
+    newvelo = velo + 0.1;
+    if (newvelo >= 5)
     {
-      encoder.setPosition(1);
-      newvelo = 1;
+      newvelo = 0;
     }
-    //Limite minimo menu
-    if (newvelo < 1)
+    if (velo != newvelo)
     {
-      encoder.setPosition(50);
-      newvelo = 50;
+      velo = newvelo;
+      Serial.println(velo);
+      showVelocidadeDefinida(X, Y, velo);
     }
-    velo = newvelo;
-    showVelocidade(velo);
+  }
+  if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
+  {
+    newvelo = velo - 0.1;
+    if (newvelo < 0 || newvelo == -0.1)
+    {
+      newvelo = (5);
+    }
+    if (velo != newvelo)
+    {
+      velo = newvelo;
+      showVelocidadeDefinida(X, Y, velo);
+    }
   }
 }
 void mudatempo()
 {
+  static RotaryEncoder::Direction lastMovementDirection = RotaryEncoder::Direction::NOROTATION;
   //Lê a posição do encoder e compara com a anterior
   encoder.tick();
-  NEWTEMPOTOTAL = encoder.getPosition();
-  if (TEMPOTOTAL != NEWTEMPOTOTAL)
+  NEWTEMPOTOTAL = TEMPOTOTAL;
+  RotaryEncoder::Direction currentDirection = encoder.getDirection();
+  if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
   {
-    if (TEMPOTOTAL < NEWTEMPOTOTAL)
+    NEWTEMPOTOTAL = TEMPOTOTAL + 60;
+    if (NEWTEMPOTOTAL >= timermaximo)
     {
-      TEMPOTOTAL = (TEMPOTOTAL + 60);
+      NEWTEMPOTOTAL = 0;
+      Serial.println(TEMPOTOTAL);
     }
-    if (TEMPOTOTAL > NEWTEMPOTOTAL)
+    if (TEMPOTOTAL != NEWTEMPOTOTAL)
     {
-      TEMPOTOTAL = (TEMPOTOTAL - 60);
+      TEMPOTOTAL = NEWTEMPOTOTAL;
+      ShowTempoTFA();
     }
-    //Limite maximo menu
-    if (NEWTEMPOTOTAL > 8640)
+  }
+  if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
+  {
+    NEWTEMPOTOTAL = TEMPOTOTAL - 60;
+    if (NEWTEMPOTOTAL < 0 || NEWTEMPOTOTAL == -60)
     {
-      encoder.setPosition(1);
-      NEWTEMPOTOTAL = 1;
+      NEWTEMPOTOTAL = (timermaximo - 60);
     }
-    //Limite minimo menu
-    if (NEWTEMPOTOTAL < 1)
+    if (TEMPOTOTAL != NEWTEMPOTOTAL)
     {
-      encoder.setPosition(8640);
-      NEWTEMPOTOTAL = 8640;
+      TEMPOTOTAL = NEWTEMPOTOTAL;
+      ShowTempoTFA();
     }
-    TEMPOTOTAL = NEWTEMPOTOTAL;
-    ShowTempoTFA(TEMPOTOTAL);
   }
 }
 void pressionatfa()
 {
   //LÊ SE O BOTÃO FOI PRESSIONADO E LEVANTA A FLAG
-  if (!digitalRead(ENTER)) pressbt = 0x01;
-  if (digitalRead(ENTER) && pressbt)
+  if (!digitalRead(ENTER)) BOTAOPRESSIONADO = ON;
+  if (digitalRead(ENTER) && BOTAOPRESSIONADO)
   {
-    pressbt = 0x00; //ABAIXA A FLAG DO BOTÃO
+    BOTAOPRESSIONADO = OFF; //ABAIXA A FLAG DO BOTÃO
     switch (pos)
     {
       case changevelocidade:
-        selecionado = 1;
-        primeiravez = 1;
+        selecionado = ON;
+        primeiravez = ON;
         tft.drawRoundRect(305, 105, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
         tft.fillRoundRect(306, 106, 158, 53, 8, LGREEN);
+        Y = 145;
+        X = 362;
         encoder.setPosition(velo);
-        showVelocidade(velo);
+        showVelocidadeDefinida(X, Y, velo);
         while (selecionado)
         {
           mudavelocidade();
           //LÊ SE O BOTÃO FOI PRESSIONADO E LEVANTA A FLAG
-          if (!digitalRead(ENTER)) pressbt = 0x01;
-          if (digitalRead(ENTER) && pressbt)
+          if (!digitalRead(ENTER)) BOTAOPRESSIONADO = ON;
+          if (digitalRead(ENTER) && BOTAOPRESSIONADO)
           {
-            pressbt = 0x00; //ABAIXA A FLAG DO BOTÃO
-            primeiravez = 1;
+            BOTAOPRESSIONADO = OFF; //ABAIXA A FLAG DO BOTÃO
+            primeiravez = ON;
             tft.drawRoundRect(305, 105, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
             tft.fillRoundRect(306, 106, 158, 53, 8, GELO);
-            showVelocidade(velo);
-            selecionado = 0;
-            encoder.setPosition(1);
+            showVelocidadeDefinida(X, Y, velo);
+            selecionado = OFF;
+            encoder.setPosition(changevelocidade);
           }
         }
         break;
       case changetempo:
-        selecionado = 1;
-        primeiravez = 1;
+        selecionado = ON;
+        primeiravez = ON;
         tft.drawRoundRect(305, 175, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
         tft.fillRoundRect(306, 176, 158, 53, 8, LGREEN);
         encoder.setPosition(TEMPOTOTAL);
-        ShowTempoTFA(TEMPOTOTAL);
+        ShowTempoTFA();
         while (selecionado)
         {
           mudatempo();
           //LÊ SE O BOTÃO FOI PRESSIONADO E LEVANTA A FLAG
-          if (!digitalRead(ENTER)) pressbt = 0x01;
-          if (digitalRead(ENTER) && pressbt)
+          if (!digitalRead(ENTER)) BOTAOPRESSIONADO = ON;
+          if (digitalRead(ENTER) && BOTAOPRESSIONADO)
           {
-            pressbt = 0x00; //ABAIXA A FLAG DO BOTÃO
-            primeiravez = 1;
+            BOTAOPRESSIONADO = OFF; //ABAIXA A FLAG DO BOTÃO
+            primeiravez = ON;
             tft.drawRoundRect(305, 175, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
             tft.fillRoundRect(306, 176, 158, 53, 8, GELO);
-            ShowTempoTFA(TEMPOTOTAL);
-            selecionado = 0;
+            ShowTempoTFA();
+            selecionado = OFF;
             encoder.setPosition(2);
           }
         }
         break;
       case confirma://SE FOI DADO UM ENTER NA TERCEIRA POSIÇÃO VAI PARA O MENU GENÉRICO
-        primeiravez = 1;//FLAG DA PRIMEIRA VEZ NO MENU
+        primeiravez = ON;//FLAG DA PRIMEIRA VEZ NO MENU
         encoder.setPosition(4);//RESETA O CURSOR PARA A PRIMEIRA POSIÇÃO DO MENU GENÉRICO
         menu = tfagenerico;
+        X = 40;//Ajusta a posição do título
         menuGenerico();
         break;
     }
@@ -161,40 +184,40 @@ void printabotaotfa(int posicao)
 {
   switch (posicao)
   {
-    case 1://CURSOR EM VELOCIDADE
+    case changevelocidade://CURSOR EM VELOCIDADE
       tft.drawRoundRect(20, 105, 275, 55, 10, GELO); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 106, 273, 53, 8, DBLUE);
       showmsg(35, 140, 1, GELO, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
 
       tft.drawRoundRect(20, 175, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 176, 273, 53, 8, GELO);
-      showmsg(70, 210, 1, BLACK, &FreeSansBold12pt7b, "TEMPO TOTAL(s): ");
+      showmsg(100, 210, 1, BLACK, &FreeSansBold12pt7b, "TEMPO TOTAL:");
 
       tft.drawRoundRect(305, 245, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(306, 246, 158, 53, 8, GREY);
       showmsg(319, 280, 1, GELO, &FreeSansBold12pt7b, "CONFIRMA");
       break;
-    case 2://CURSOR EM TEMPO TOTAL
+    case changetempo://CURSOR EM TEMPO TOTAL
       tft.drawRoundRect(20, 105, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 106, 273, 53, 8, GELO);
       showmsg(35, 140, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
 
       tft.drawRoundRect(20, 175, 275, 55, 10, GELO); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 176, 273, 53, 8, DBLUE);
-      showmsg(70, 210, 1, GELO, &FreeSansBold12pt7b, "TEMPO TOTAL(s): ");
+      showmsg(100, 210, 1, GELO, &FreeSansBold12pt7b, "TEMPO TOTAL:");
 
       tft.drawRoundRect(305, 245, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(306, 246, 158, 53, 8, GREY);
       showmsg(319, 280, 1, GELO, &FreeSansBold12pt7b, "CONFIRMA");
       break;
-    case 3://CURSOR EM ENTER
+    case confirma://CURSOR EM ENTER
       tft.drawRoundRect(20, 105, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 106, 273, 53, 8, GELO);
       showmsg(35, 140, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
 
       tft.drawRoundRect(20, 175, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(21, 176, 273, 53, 8, GELO);
-      showmsg(70, 210, 1, BLACK, &FreeSansBold12pt7b, "TEMPO TOTAL(s): ");
+      showmsg(100, 210, 1, BLACK, &FreeSansBold12pt7b, "TEMPO TOTAL: ");
 
       tft.drawRoundRect(305, 245, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
       tft.fillRoundRect(306, 246, 158, 53, 8, TOMATO);

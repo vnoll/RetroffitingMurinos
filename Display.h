@@ -32,6 +32,7 @@
 #define LGREEN  0XBFCF
 #define KHAKI   0xF0E68C
 #define GREY    0xFF6347
+#define DORANGE tft.color565(255,140,0)
 #define TOMATO  tft.color565(255, 69, 0)
 #define GELO    tft.color565(240, 255, 240)
 #define DBLUE   tft.color565(0, 0, 31)
@@ -51,19 +52,28 @@ void menuPrincipal();
 void menuGenerico();
 int menuTFA();
 void changeMenu();
-void printaparar();
-void printabotao(int posicao);
+void mudaopcoes();
 void printaopcoes(int posicao);
+void printaparar();
+void mudabotao();
+void pressionabotao();
+void printabotao(int posicao);
+void printabotaomanual(int posicao);
+void mudabotaomanual();
 // funcoes display
 // ================
 
 void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *txt, const char *msg);
 void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *msg);
 void showint(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
+void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
+void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
 void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
 unsigned long Lines(uint16_t color);
 void ShowTempo();
-void showVelocidade(int vel);
-void ShowTempoTFA(long temp);
+void showDistancia();
+void showVelocidadeReal(int x, int y, float vel);
+void showVelocidadeDefinida(int x, int y, float vel);
+void ShowTempoTFA();
 
 #endif

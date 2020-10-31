@@ -1,33 +1,28 @@
 #include "Display.h"
-void ShowTempoTFA(long temp)
+void ShowTempoTFA()
 {
-  long seg1,seg2;
-  long min1,min2;
-  long hora1,hora2;
-  long countermin;
-  static long oldseg1=0,oldseg2=0;
-  static long oldmin1=0,oldmin2=0;
-  static long oldhora1=0,oldhora2=0;
-  
-  seg1=((temp%60)%10);
-  seg2=((temp%60)/10);
-  min1=((temp/60)%10);
-  min2=((temp/60)/10);
-  if (temp >= 60)
-  {
-    countermin++;
-    if (countermin == 60)  
-    {
-      countermin = 0;
-      Counter1Hour++;
-      if (Counter1Hour > 11) 
-      {
-        Counter1Hour = 0;
-      }
-    }
-  }
-  hora1 = ((countermin/60)%10);
-  hora2 = ((countermin/60)/10); 
+  long seg1, seg2;
+  long min1, min2;
+  long hora1, hora2;
+  static long oldseg1 = 0, oldseg2 = 0;
+  static long oldmin1 = 0, oldmin2 = 0;
+  static long oldhora1 = 0, oldhora2 = 0;
+
+  seg1 = ((TEMPOTOTAL % 60) % 10);
+  seg2 = ((TEMPOTOTAL % 60) / 10);
+  min1 = ((TEMPOTOTAL / 60) % 10);
+  min2 = (((TEMPOTOTAL / 60) / 10) % 6);
+  hora1 = ((TEMPOTOTAL / 3600) % 10);
+  hora2 = ((TEMPOTOTAL / 3600) / 10);
+
+  Serial.print(hora2);
+  Serial.print(hora1);
+  Serial.print(":");
+  Serial.print(min2);
+  Serial.print(min1);
+  Serial.print(":");
+  Serial.print(seg2);
+  Serial.println(seg1);
 
   if (primeiravez)
   {
@@ -46,10 +41,10 @@ void ShowTempoTFA(long temp)
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-    primeiravez=0;
+    primeiravez = OFF;
   }
 
-  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == 0))
+  if (((min1 != oldmin1) || (min2 != oldmin2)) && (primeiravez == OFF))
   {
     // apaga os numeros anteriores somente se nao for a primeira vez
     showtempo(435, 215, 1, LGREEN, &FreeSansBold18pt7b, oldseg1);
@@ -77,91 +72,120 @@ void ShowTempoTFA(long temp)
     oldhora2 = hora2;
   }
 }
-void showVelocidade(int vel)
+void showDistancia()
 {
-  static int oldvelocidade;
-  if(primeiravez)
+  calculadistancia();
+  if (primeiravez)
   {
-    showint(365, 145, 1, BLACK, &FreeSansBold18pt7b, vel);
-    oldvelocidade = vel;
-    primeiravez=0;
+    Serial.print("estou rodando");
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distanciatotal);
+    oldDistanciatotal = distanciatotal;
+    primeiravez = OFF;
   }
-  if(vel!= oldvelocidade && primeiravez==0)
+  if (oldDistanciatotal !=  distanciatotal)
   {
-    showint(365, 145, 1, LGREEN, &FreeSansBold18pt7b, oldvelocidade);
-    showint(365, 145, 1, BLACK, &FreeSansBold18pt7b, vel);
+    showdist(317, 165, 1, GELO, &FreeSansBold18pt7b, oldDistanciatotal);
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distanciatotal);
+    oldDistanciatotal = distanciatotal;
+  }
+}
+void showVelocidadeReal(int x, int y, float vel)
+{
+  if (primeiravez)
+  {
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+    primeiravez = OFF;
+  }
+  if (vel != oldvelocidade && primeiravez == OFF)
+  {
+    showfloat(x, y, 1, GELO, &FreeSansBold18pt7b, oldvelocidade);
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+  }
+}
+void showVelocidadeDefinida(int x, int y, float vel)
+{
+  static float oldvelocidade;
+  if (primeiravez)
+  {
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+    primeiravez = OFF;
+  }
+  if (vel != oldvelocidade && primeiravez == OFF)
+  {
+    showfloat(x, y, 1, LGREEN, &FreeSansBold18pt7b, oldvelocidade);
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
     oldvelocidade = vel;
   }
 }
 void ShowTempo()
 {
-  int seg1,seg2;
-  int min1,min2;
-  int hora1,hora2;
- 
-  static int oldseg1=0,oldseg2=0;
-  static int oldmin1=0,oldmin2=0;
-  static int oldhora1=0,oldhora2=0;
-
-  static int flag_primeira_vez = 1;
+  int seg1, seg2;
+  int min1, min2;
+  int hora1, hora2;
+  static int oldseg1 = 0, oldseg2 = 0;
+  static int oldmin1 = 0, oldmin2 = 0;
+  static int oldhora1 = 0, oldhora2 = 0;
   
-  seg1=((interruptCounter1s%60)%10);
-  seg2=((interruptCounter1s%60)/10);
-  min1=((interruptCounter1s/60)%10);
-  min2=((interruptCounter1s/60)/10);
-  hora1 = ((Counter1Min/60)%10);
-  hora2 = ((Counter1Min/60)/10); 
+  seg1 = ((interruptCounter1s % 60) % 10);
+  seg2 = ((interruptCounter1s % 60) / 10);
+  min1 = ((interruptCounter1s / 60) % 10);
+  min2 = (((interruptCounter1s / 60) / 10) % 6);
+  hora1 = ((interruptCounter1s / 3600) % 10);
+  hora2 = ((interruptCounter1s / 3600) / 10);
 
-  if (primeiravez == 1)
+  if (primeiravez == ON)
   {
-      showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
-      showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
-      showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-      showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
-      showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
-      showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-      showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
-      showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
+    showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+    showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+    showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+    showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
-      oldseg1 = seg1;
-      oldseg2 = seg2;
-      oldmin1 = min1;
-      oldmin2 = min2;
-      oldhora1 = hora1;
-      oldhora2 = hora2;
-      primeiravez= 0;
+    oldseg1 = seg1;
+    oldseg2 = seg2;
+    oldmin1 = min1;
+    oldmin2 = min2;
+    oldhora1 = hora1;
+    oldhora2 = hora2;
+    primeiravez = OFF;
   }
 
-  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == 0))
-  {  
-      // apaga os numeros anteriores somente se nao for a primeira vez
-      showint(435, 235, 1, GELO, &FreeSansBold18pt7b, oldseg1);
-      showint(415, 235, 1, GELO, &FreeSansBold18pt7b, oldseg2);
-      showint(385, 235, 1, GELO, &FreeSansBold18pt7b, oldmin1);
-      showint(365, 235, 1, GELO, &FreeSansBold18pt7b, oldmin2);
-      showint(335, 235, 1, GELO, &FreeSansBold18pt7b, oldhora1);
-      showint(315, 235, 1, GELO, &FreeSansBold18pt7b, oldhora2);
+  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == OFF))
+  {
+    // apaga os numeros anteriores somente se nao for a primeira vez
+    showint(435, 235, 1, GELO, &FreeSansBold18pt7b, oldseg1);
+    showint(415, 235, 1, GELO, &FreeSansBold18pt7b, oldseg2);
+    showint(385, 235, 1, GELO, &FreeSansBold18pt7b, oldmin1);
+    showint(365, 235, 1, GELO, &FreeSansBold18pt7b, oldmin2);
+    showint(335, 235, 1, GELO, &FreeSansBold18pt7b, oldhora1);
+    showint(315, 235, 1, GELO, &FreeSansBold18pt7b, oldhora2);
 
-      // escreve os novos
-      showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
-      showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
-      showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-      showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
-      showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
-      showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-      showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
-      showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
+    // escreve os novos
+    showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+    showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+    showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+    showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
-      // atualiza 
-      oldseg1 = seg1;
-      oldseg2 = seg2;
-      oldmin1 = min1;
-      oldmin2 = min2;
-      oldhora1 = hora1;
-      oldhora2 = hora2;
+    // atualiza
+    oldseg1 = seg1;
+    oldseg2 = seg2;
+    oldmin1 = min1;
+    oldmin2 = min2;
+    oldhora1 = hora1;
+    oldhora2 = hora2;
 
   }
- }
+}
 void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *msg)
 {
   tft.setFont(f);
@@ -196,7 +220,22 @@ void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t)
   tft.setTextSize(sz);
   tft.printf("%d", t);
 }
-
+void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
+{
+  tft.setFont(f);
+  tft.setCursor(x, y);
+  tft.setTextColor(color);
+  tft.setTextSize(sz);
+  tft.printf("%.1f", t);
+}
+void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
+{
+  tft.setFont(f);
+  tft.setCursor(x, y);
+  tft.setTextColor(color);
+  tft.setTextSize(sz);
+  tft.printf("%.2f", t);
+}
 void Abertura()
 {
   tft.fillScreen(LGREEN);
