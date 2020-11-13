@@ -1,9 +1,151 @@
 #include "Display.h"
-void ShowTempoTFA()
+#include "Medidas.h"
+
+
+void showDistanciaOld(float distancia)
+{
+  static float oldDistancia = 0;
+  if (oldDistancia !=  distancia)
+  {
+    // limpa a tela da distancia
+    tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
+    oldDistancia = distancia;
+  }  
+}
+
+void showDistancia(float distancia)
+{
+  static bool primeiravez = true;
+  static float oldDistanciatotal = 0;
+  updateDistancia();
+  if (primeiravez)
+  {
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
+    oldDistanciatotal = distancia;
+    primeiravez = false;
+  }
+  if (oldDistanciatotal !=  distancia)
+  {
+    showdist(317, 165, 1, GELO, &FreeSansBold18pt7b, oldDistanciatotal);
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
+    oldDistanciatotal = distancia;
+  }
+}
+
+void showVelocidadeReal(int x, int y, float vel)
+{
+  static bool primeiravez = true;
+  static float oldvelocidade;
+  if (primeiravez)
+  {
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b,vel);
+    oldvelocidade = vel;
+    primeiravez = false;
+  }
+  if (vel != oldvelocidade && primeiravez == false)
+  {
+    showfloat(x, y, 1, GELO, &FreeSansBold18pt7b, oldvelocidade);
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+  }
+}
+
+void showVelocidadeDefinida(int x, int y, float vel)
+{
+  static float oldvelocidade;
+  static bool primeiravez = true; 
+  if (primeiravez)
+  {
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+    primeiravez = false;
+  }
+  if (vel != oldvelocidade && primeiravez == false)
+  {
+    showfloat(x, y, 1, LGREEN, &FreeSansBold18pt7b, oldvelocidade);
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
+    oldvelocidade = vel;
+  }
+}
+
+void ShowOpcoesModoManual()
+{
+  switch (comando)
+  {
+    case INICIAR:
+      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(36, 263, 120, 38, 8, TOMATO);
+      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
+      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
+      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+      break;
+
+    case PARAR:
+      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
+      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(176, 263, 115, 38, 8, TOMATO);
+      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
+      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+      break;
+
+    case VOLTAR:
+      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
+      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
+      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+      tft.fillRoundRect(311, 263, 130, 38, 8, TOMATO);
+      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+      break;
+  }
+}
+
+void showTelaModoManual(int X, char *titulo)
+{
+    tft.fillScreen(KHAKI);//LIMPA A TELA
+    tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(81, 6, 313, 43, 8, LGREEN);
+    showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
+
+    tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(21, 56, 273, 53, 8, GELO);
+    showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
+    tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+    tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(386, 56, 78, 53, 8, GELO);
+
+    tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
+    showmsg(98, 160, 1, BLACK, &FreeSansBold12pt7b, "DISTANCIA (m): ");
+    tft.drawRoundRect(305, 125, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(306, 126, 158, 53, 8, GELO);
+
+    tft.drawRoundRect(20, 195, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(21, 196, 273, 53, 8, GELO);
+    showmsg(150, 230, 1, BLACK, &FreeSansBold12pt7b, "TEMPO (s): ");
+    tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
+  
+}
+
+void ShowTempoConfig(long TEMPOTOTAL)
 {
   long seg1, seg2;
   long min1, min2;
   long hora1, hora2;
+  static bool primeiravez = true;
   static long oldseg1 = 0, oldseg2 = 0;
   static long oldmin1 = 0, oldmin2 = 0;
   static long oldhora1 = 0, oldhora2 = 0;
@@ -26,14 +168,14 @@ void ShowTempoTFA()
 
   if (primeiravez)
   {
-    showtempo(435, 215, 1, BLACK, &FreeSansBold18pt7b, seg1);
-    showtempo(415, 215, 1, BLACK, &FreeSansBold18pt7b, seg2);
-    showmsg(405, 213, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showtempo(385, 215, 1, BLACK, &FreeSansBold18pt7b, min1);
-    showtempo(365, 215, 1, BLACK, &FreeSansBold18pt7b, min2);
-    showmsg(355, 213, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showtempo(335, 215, 1, BLACK, &FreeSansBold18pt7b, hora1);
-    showtempo(315, 215, 1, BLACK, &FreeSansBold18pt7b, hora2);
+    showtempo(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+    showtempo(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showtempo(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+    showtempo(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showtempo(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+    showtempo(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
     oldseg1 = seg1;
     oldseg2 = seg2;
@@ -41,27 +183,27 @@ void ShowTempoTFA()
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-    primeiravez = OFF;
+    primeiravez = false;
   }
 
-  if (((min1 != oldmin1) || (min2 != oldmin2)) && (primeiravez == OFF))
+  if (((min1 != oldmin1) || (min2 != oldmin2)) && (primeiravez == false))
   {
     // apaga os numeros anteriores somente se nao for a primeira vez
-    showtempo(435, 215, 1, LGREEN, &FreeSansBold18pt7b, oldseg1);
-    showtempo(415, 215, 1, LGREEN, &FreeSansBold18pt7b, oldseg2);
-    showtempo(385, 215, 1, LGREEN, &FreeSansBold18pt7b, oldmin1);
-    showtempo(365, 215, 1, LGREEN, &FreeSansBold18pt7b, oldmin2);
-    showtempo(335, 215, 1, LGREEN, &FreeSansBold18pt7b, oldhora1);
-    showtempo(315, 215, 1, LGREEN, &FreeSansBold18pt7b, oldhora2);
+    showtempo(435, 235, 1, LGREEN, &FreeSansBold18pt7b, oldseg1);
+    showtempo(415, 235, 1, LGREEN, &FreeSansBold18pt7b, oldseg2);
+    showtempo(385, 235, 1, LGREEN, &FreeSansBold18pt7b, oldmin1);
+    showtempo(365, 235, 1, LGREEN, &FreeSansBold18pt7b, oldmin2);
+    showtempo(335, 235, 1, LGREEN, &FreeSansBold18pt7b, oldhora1);
+    showtempo(315, 235, 1, LGREEN, &FreeSansBold18pt7b, oldhora2);
     //escreve os novos
-    showtempo(435, 215, 1, BLACK, &FreeSansBold18pt7b, seg1);
-    showtempo(415, 215, 1, BLACK, &FreeSansBold18pt7b, seg2);
-    showmsg(405, 213, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showtempo(385, 215, 1, BLACK, &FreeSansBold18pt7b, min1);
-    showtempo(365, 215, 1, BLACK, &FreeSansBold18pt7b, min2);
-    showmsg(355, 213, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showtempo(335, 215, 1, BLACK, &FreeSansBold18pt7b, hora1);
-    showtempo(315, 215, 1, BLACK, &FreeSansBold18pt7b, hora2);
+    showtempo(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+    showtempo(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showtempo(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+    showtempo(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showtempo(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+    showtempo(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
     // atualiza
     oldseg1 = seg1;
@@ -72,55 +214,45 @@ void ShowTempoTFA()
     oldhora2 = hora2;
   }
 }
-void showDistancia()
+
+void ShowTempoConfigOld(long TEMPOTOTAL)
 {
-  calculadistancia();
-  if (primeiravez)
-  {
-    Serial.print("estou rodando");
-    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distanciatotal);
-    oldDistanciatotal = distanciatotal;
-    primeiravez = OFF;
-  }
-  if (oldDistanciatotal !=  distanciatotal)
-  {
-    showdist(317, 165, 1, GELO, &FreeSansBold18pt7b, oldDistanciatotal);
-    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distanciatotal);
-    oldDistanciatotal = distanciatotal;
-  }
+  long seg1, seg2;
+  long min1, min2;
+  long hora1, hora2;
+  static long oldseg1 = 0, oldseg2 = 0;
+  static long oldmin1 = 0, oldmin2 = 0;
+  static long oldhora1 = 0, oldhora2 = 0;
+
+  seg1 = ((TEMPOTOTAL % 60) % 10);
+  seg2 = ((TEMPOTOTAL % 60) / 10);
+  min1 = ((TEMPOTOTAL / 60) % 10);
+  min2 = (((TEMPOTOTAL / 60) / 10) % 6);
+  hora1 = ((TEMPOTOTAL / 3600) % 10);
+  hora2 = ((TEMPOTOTAL / 3600) / 10);
+
+  // limpa a tela filling it
+  tft.fillRoundRect(306, 196, 158, 53, 8, LGREEN);
+  
+  showtempo(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+  showtempo(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+  showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+  showtempo(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+  showtempo(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+  showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+  showtempo(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+  showtempo(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
+
+    // atualiza
+  oldseg1 = seg1;
+  oldseg2 = seg2;
+  oldmin1 = min1;
+  oldmin2 = min2;
+  oldhora1 = hora1;
+  oldhora2 = hora2;
 }
-void showVelocidadeReal(int x, int y, float vel)
-{
-  if (primeiravez)
-  {
-    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
-    oldvelocidade = vel;
-    primeiravez = OFF;
-  }
-  if (vel != oldvelocidade && primeiravez == OFF)
-  {
-    showfloat(x, y, 1, GELO, &FreeSansBold18pt7b, oldvelocidade);
-    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
-    oldvelocidade = vel;
-  }
-}
-void showVelocidadeDefinida(int x, int y, float vel)
-{
-  static float oldvelocidade;
-  if (primeiravez)
-  {
-    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
-    oldvelocidade = vel;
-    primeiravez = OFF;
-  }
-  if (vel != oldvelocidade && primeiravez == OFF)
-  {
-    showfloat(x, y, 1, LGREEN, &FreeSansBold18pt7b, oldvelocidade);
-    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
-    oldvelocidade = vel;
-  }
-}
-void ShowTempo()
+
+void ShowTempoOld(long numinter)
 {
   int seg1, seg2;
   int min1, min2;
@@ -129,14 +261,54 @@ void ShowTempo()
   static int oldmin1 = 0, oldmin2 = 0;
   static int oldhora1 = 0, oldhora2 = 0;
   
-  seg1 = ((interruptCounter1s % 60) % 10);
-  seg2 = ((interruptCounter1s % 60) / 10);
-  min1 = ((interruptCounter1s / 60) % 10);
-  min2 = (((interruptCounter1s / 60) / 10) % 6);
-  hora1 = ((interruptCounter1s / 3600) % 10);
-  hora2 = ((interruptCounter1s / 3600) / 10);
+  seg1 = ((numinter % 60) % 10);
+  seg2 = ((numinter % 60) / 10);
+  min1 = ((numinter / 60) % 10);
+  min2 = (((numinter / 60) / 10) % 6);
+  hora1 = ((numinter / 3600) % 10);
+  hora2 = ((numinter / 3600) / 10);
 
-  if (primeiravez == ON)
+  // limpa a tela filling it
+  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
+
+    // escreve os novos
+    showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+    showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+    showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+    showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+    showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
+
+    // atualiza
+    oldseg1 = seg1;
+    oldseg2 = seg2;
+    oldmin1 = min1;
+    oldmin2 = min2;
+    oldhora1 = hora1;
+    oldhora2 = hora2;
+
+}
+
+void ShowTempo(long numinter)
+{
+  static bool primeiravez = true; 
+  int seg1, seg2;
+  int min1, min2;
+  int hora1, hora2;
+  static int oldseg1 = 0, oldseg2 = 0;
+  static int oldmin1 = 0, oldmin2 = 0;
+  static int oldhora1 = 0, oldhora2 = 0;
+  
+  seg1 = ((numinter % 60) % 10);
+  seg2 = ((numinter % 60) / 10);
+  min1 = ((numinter / 60) % 10);
+  min2 = (((numinter / 60) / 10) % 6);
+  hora1 = ((numinter / 3600) % 10);
+  hora2 = ((numinter / 3600) / 10);
+
+  if (primeiravez == true)
   {
     showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
     showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
@@ -153,10 +325,10 @@ void ShowTempo()
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-    primeiravez = OFF;
+    primeiravez = false;
   }
 
-  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == OFF))
+  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == false))
   {
     // apaga os numeros anteriores somente se nao for a primeira vez
     showint(435, 235, 1, GELO, &FreeSansBold18pt7b, oldseg1);
@@ -186,6 +358,16 @@ void ShowTempo()
 
   }
 }
+
+void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont * f, long t)
+{
+  tft.setFont(f);
+  tft.setCursor(x, y);
+  tft.setTextColor(color);
+  tft.setTextSize(sz);
+  tft.printf("%ld", t);
+}
+
 void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *msg)
 {
   tft.setFont(f);
@@ -204,14 +386,7 @@ void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont * f, const ch
   tft.print(txt);
   tft.printf("%s", msg);
 }
-void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont * f, long t)
-{
-  tft.setFont(f);
-  tft.setCursor(x, y);
-  tft.setTextColor(color);
-  tft.setTextSize(sz);
-  tft.printf("%ld", t);
-}
+
 void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t)
 {
   tft.setFont(f);
@@ -220,6 +395,7 @@ void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t)
   tft.setTextSize(sz);
   tft.printf("%d", t);
 }
+
 void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
 {
   tft.setFont(f);
@@ -228,6 +404,7 @@ void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t
   tft.setTextSize(sz);
   tft.printf("%.1f", t);
 }
+
 void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
 {
   tft.setFont(f);
@@ -236,7 +413,8 @@ void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
   tft.setTextSize(sz);
   tft.printf("%.2f", t);
 }
-void Abertura()
+
+void showAbertura()
 {
   tft.fillScreen(LGREEN);
   showmsg(60, 40, 1, BLACK, &FreeSerifBold18pt7b, "SISTEMA DE TESTES");

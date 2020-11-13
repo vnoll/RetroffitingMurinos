@@ -4,6 +4,11 @@
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>
 
+#include "Main.h"
+
+
+MCUFRIEND_kbv tft;
+
 #include <Fonts/FreeSans9pt7b.h>
 #include <Fonts/FreeSans12pt7b.h>
 #include <Fonts/FreeSans18pt7b.h>
@@ -41,39 +46,22 @@
 #define TFT_MAXX 469
 #define TFT_MAXY 309
 
-
-#include "Display.h"
-#include "Medidas.h"
-MCUFRIEND_kbv tft;
-
-// Funções de Menus
-void Abertura();
-void menuPrincipal();
-void menuGenerico();
-int menuTFA();
-void changeMenu();
-void mudaopcoes();
-void printaopcoes(int posicao);
-void printaparar();
-void mudabotao();
-void pressionabotao();
-void printabotao(int posicao);
-void printabotaomanual(int posicao);
-void mudabotaomanual();
-// funcoes display
-// ================
-
-void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *txt, const char *msg);
-void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont *f, const char *msg);
-void showint(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
-void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
-void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
-void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont *f, int t);
-unsigned long Lines(uint16_t color);
-void ShowTempo();
-void showDistancia();
+// funcoes do Display
+/*************************/
+void showDistanciaOld();
+void showDistancia(float distancia);
 void showVelocidadeReal(int x, int y, float vel);
 void showVelocidadeDefinida(int x, int y, float vel);
-void ShowTempoTFA();
+void ShowTempoConfig(long TEMPOTOTAL);
+void showTelaModoManual(int X, char *titulo);
+void ShowOpcoesModoManual();
+void ShowTempo(long numinter);
+void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont * f, long t);
+void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *msg);
+void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *txt, const char *msg);
+void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t);
+void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
+void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t);
+void showAbertura();
 
 #endif
