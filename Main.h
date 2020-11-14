@@ -4,14 +4,24 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+#include "MenuPrincipal.h"
 #include "Medidas.h"
 #include "Display.h"
 #include "ModoManual.h"
-#include "MenuPrincipal.h"
 
 #define DESL_TITULO_DISPLAY_MODO_MANUAL -2
 #define DESL_TITULO_DISPLAY_MODO_TFA 40
 #define DESL_TITULO_DISPLAY_MODO_TCFM 25
+
+/****************************************************************
+ * a estrutura de dados é global e pertence a todo o projeto    *
+ * mudanças aqui implicam em mudanças globais                   *
+ *                                                              *
+ * 1) menu --> indica em qual menu estou                        *
+ * 2) comando --> indica qual o ultimo comando dado             *
+ * 3) DadosEnsaio --> estrutuRa que mantém os dados atuais      *
+ * 4) enterPressed --> atualizado na int quando for ENTER       *
+ * **************************************************************/
 
 enum menus {PRINCIPAL,MANUALL,TCFM,TFA};
 enum menus menu;
@@ -28,13 +38,16 @@ struct Dados
   float config_velocidade;
   long config_tempo;  
 };
-
 struct Dados DadosEnsaio;
 struct Dados * pDadosEnsaio = &DadosEnsaio;
 
-
 bool enterPressed = false;
 
+/* **************************************************************
+*   FIM DA ESTRUTURA DE DADOS GLOBAIS                            *
+*****************************************************************/
+
+/*  aqui ocorre a interrupção toda vez que o botão é pressionado*/
 void IRAM_ATTR isr_enter() {
   enterPressed = false;
   delay(200);
