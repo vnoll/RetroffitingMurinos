@@ -5,7 +5,8 @@
 
 
 void menuPrincipal();
-void escolheOpcao();
+void desenhaTitulo();
 void imprimeMenu();
+void escolheOpcao();
 
 #endif

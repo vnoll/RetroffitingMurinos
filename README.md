@@ -7,7 +7,7 @@ Arduino IDE ultima versão
 
 ### Hardware Utilizado
 - ESP32 para controle
-- LCD touchscreen modelo IIL
+- Display LCD TFT 3.2"  240 x 320 pixels (IIL9341)
 - Encoder rotativo de 1000 linhas/volta
 - Arduino nano para medir a velocidade a cada 1 segundo
 - Entre Arduino Nano e a ESP32 tem-se uma comunicação serial

@@ -3,11 +3,15 @@
 void menuPrincipal()
 {
   comando = PARAR;
-  menu = MANUALL;
-  
+  menu = MANUALL;  
   encoder.setPosition(menu);
   pos = encoder.getPosition();
+  desenhaTitulo();  
+  escolheOpcao();
+}
 
+void desenhaTitulo()
+{
   tft.fillScreen(LBLUE);//limpa a tela
   tft.drawRoundRect(143, 11, 200, 50, 6, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(144, 12, 198, 48, 4, DORANGE);
@@ -20,40 +24,6 @@ void menuPrincipal()
   showmsg(248, 51, 1, GELO, &FreeSansBold24pt7b, "N");
   showmsg(288, 51, 1, GELO, &FreeSansBold24pt7b, "U");
   imprimeMenu(); 
-  escolheOpcao();
-}
-
-void escolheOpcao()
-{ 
-  unsigned char pos_atual_encoder = 0;
-  while (true)
-  { 
-   //Lê a posição do encoder e compara com a anterior
-   encoder.tick();
-   newPos  = encoder.getPosition();
-   if (pos != newPos)
-    {
-      //Limite maximo menu
-      if (newPos > 3)
-      {
-        encoder.setPosition(1);
-        newPos = 1;
-      }
-      //Limite minimo menu
-      if (newPos < 1)
-      {
-        encoder.setPosition(3);
-        newPos = 3;
-      }
-      pos = newPos;
-      if (pos == 1) menu = MANUALL;
-      else if (pos == 2) menu = TCFM;
-      else menu = TFA;
-      imprimeMenu();
-    }
-    if(enterPressed) break;
-  }
-  enterPressed = false;
 }
 
 void imprimeMenu()
@@ -106,3 +76,37 @@ void imprimeMenu()
       break;
   }
 }
+
+void escolheOpcao()
+{ 
+  unsigned char pos_atual_encoder = 0;
+  while (true)
+  { 
+   //Lê a posição do encoder e compara com a anterior
+   encoder.tick();
+   newPos  = encoder.getPosition();
+   if (pos != newPos)
+    {
+      //Limite maximo menu
+      if (newPos > 3)
+      {
+        encoder.setPosition(1);
+        newPos = 1;
+      }
+      //Limite minimo menu
+      if (newPos < 1)
+      {
+        encoder.setPosition(3);
+        newPos = 3;
+      }
+      pos = newPos;
+      if (pos == 1) menu = MANUALL;
+      else if (pos == 2) menu = TCFM;
+      else menu = TFA;
+      imprimeMenu();
+    }
+    if(enterPressed) break;
+  }
+  enterPressed = false;
+}
+
