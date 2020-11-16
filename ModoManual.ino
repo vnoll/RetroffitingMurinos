@@ -43,10 +43,12 @@ int modoManual(int X, char *titulo)
 		    // inicia controle em MF
         while (1)
         {
+          updateVelocidadeEsteira();
           showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
           showDistancia(DadosEnsaio.distanciaAcumulada);          
           DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s; 
           ShowTempo(DadosEnsaio.tempo);
+          
           if (enterPressed || DadosEnsaio.tempo == 0){
             enterPressed = false; 
             break;
@@ -86,55 +88,6 @@ void escolheComando()
     }
     if(enterPressed) break;
   }
-  enterPressed = false;
-}
-
-void configVelocidadeOld()
-{
-  float newvelo =0.0;
-  float velo = 0.0;
-  static RotaryEncoder::Direction lastMovementDirection = RotaryEncoder::Direction::NOROTATION;
-  //Lê a posição do encoder e compara com a anterior
-  
-  tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-  tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
-  delay(100);
-  showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);  
-  
-  while (true)
-  {  
-    encoder.tick();
-    RotaryEncoder::Direction currentDirection = encoder.getDirection();
-    if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
-    {
-      newvelo = velo + 0.1;
-      if (newvelo >= 5)
-      {
-        newvelo = 0;
-      }
-      if (velo != newvelo)
-      {
-        velo = newvelo;
-        //Serial.println(velo);
-        showVelocidadeDefinida(402, 95, velo);
-      }
-    }
-    if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
-    {
-      newvelo = velo - 0.1;
-      if (newvelo < 0 || newvelo == -0.1)
-      {
-        newvelo = (5);
-      }
-      if (velo != newvelo)
-      {
-        velo = newvelo;
-        showVelocidadeDefinida(402, 95, velo);
-      }
-    }
-    if(enterPressed) break;
-  }  
-  DadosEnsaio.config_velocidade = newvelo;
   enterPressed = false;
 }
 
@@ -210,67 +163,6 @@ void configTempo()
     if(enterPressed) break;
   }
   enterPressed = false;
-  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
-  ShowTempoConfig(DadosEnsaio.config_tempo);  
-}
-
-void configTempoOld()
-{
-  long seg1, seg2;
-  long min1, min2;
-  long hora1, hora2;
-  static long oldseg1 = 0, oldseg2 = 0;
-  static long oldmin1 = 0, oldmin2 = 0;
-  static long oldhora1 = 0, oldhora2 = 0;
-  static bool primeiravez = true;
-  static long NEWTEMPOTOTAL=0;
-  static long tempoTotal=0;
-  static RotaryEncoder::Direction lastMovementDirection = RotaryEncoder::Direction::NOROTATION;
-  
-  tempoTotal = DadosEnsaio.config_tempo;  
-  tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-  tft.fillRoundRect(306, 196, 158, 53, 8, LGREEN);  
-  //ShowTempo(DadosEnsaio.config_tempo); 
-  ShowTempoConfig(tempoTotal);
-
-  while (true)
-  {
-    //Lê a posição do encoder e compara com a anterior
-    encoder.tick();
-    NEWTEMPOTOTAL = tempoTotal;
-    RotaryEncoder::Direction currentDirection = encoder.getDirection();
-    if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
-    {
-      NEWTEMPOTOTAL = tempoTotal + 60;
-      if (NEWTEMPOTOTAL >= timermaximo)
-      {
-        NEWTEMPOTOTAL = 0;
-        //Serial.println(tempoTotal);
-      }
-      if (tempoTotal != NEWTEMPOTOTAL)
-      {
-          tempoTotal = NEWTEMPOTOTAL;        
-          ShowTempoConfig(tempoTotal);   
-      }
-    }
-    if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
-    {
-      NEWTEMPOTOTAL = tempoTotal - 60;
-      if (NEWTEMPOTOTAL < 0 || NEWTEMPOTOTAL == -60)
-      {
-        NEWTEMPOTOTAL = (timermaximo - 60);
-      }
-      if (tempoTotal != NEWTEMPOTOTAL)
-      {
-        tempoTotal = NEWTEMPOTOTAL;
-        ShowTempoConfig(tempoTotal);        
-      }
-    }
-    if(enterPressed) break;
-  }
-  DadosEnsaio.config_tempo = tempoTotal;
-  enterPressed = false;
-  tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
   ShowTempoConfig(DadosEnsaio.config_tempo);  
 }

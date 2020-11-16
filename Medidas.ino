@@ -33,3 +33,16 @@ void ZeraTimer() {
   Counter1Hour = 0;
   DadosEnsaio.distancia1s = 0;
 }
+
+
+void updateVelocidadeEsteira()  
+{
+    Serial.println("update velocidade");
+    if (Serial.available() > 0)
+    {
+      String dadoLido = Serial.readString();
+      DadosEnsaio.velocidade = dadoLido.toFloat()/1000.0;
+      Serial.println(DadosEnsaio.velocidade);
+    }
+  }  
+}

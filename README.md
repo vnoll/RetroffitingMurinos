@@ -25,3 +25,6 @@ Arduino IDE ultima versão
 - Murinos_main.ino
 - Display.ino
 - Medidas.ino
+- MenuPrincipal.ino
+- ModoManual.ino
+

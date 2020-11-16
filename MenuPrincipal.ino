@@ -85,6 +85,7 @@ void escolheOpcao()
    //Lê a posição do encoder e compara com a anterior
    encoder.tick();
    newPos  = encoder.getPosition();
+   
    if (pos != newPos)
     {
       //Limite maximo menu

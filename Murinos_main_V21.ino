@@ -1,7 +1,5 @@
 #include <SPI.h>          // f.k. for Arduino-1.5.2
-
 #include "Main.h"
-void updateVelocidadeEsteira();
 
 void setup()
 {
@@ -22,7 +20,6 @@ void setup()
 
 void loop()
 {  
- //updateVelocidadeEsteira();
   switch (menu)
   {
     case PRINCIPAL:
@@ -58,17 +55,3 @@ void loop()
   }
 }
 
-void updateVelocidadeEsteira()
-{
-  // pensar em como receber a velocidade e fazer o update
-  // na estrutura de dados
-  float serial_velocidade = 0;
-  if (Serial.available() > 0)
-  {
-    String dadoLido = Serial.readString();
-    Serial.println(dadoLido);
-    DadosEnsaio.velocidade = dadoLido.toFloat();
-
-  }
-
-}
