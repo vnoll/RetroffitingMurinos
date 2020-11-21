@@ -4,7 +4,7 @@
 
 void IRAM_ATTR onTimer() {
   portENTER_CRITICAL_ISR(&timerMux);
-  interruptCounter1s++;
+    interruptCounter1s++;
   portEXIT_CRITICAL_ISR(&timerMux);
 }
 
@@ -34,15 +34,13 @@ void ZeraTimer() {
   DadosEnsaio.distancia1s = 0;
 }
 
-
 void updateVelocidadeEsteira()  
 {
     Serial.println("update velocidade");
     if (Serial.available() > 0)
     {
       String dadoLido = Serial.readString();
-      DadosEnsaio.velocidade = dadoLido.toFloat()/1000.0;
+      DadosEnsaio.velocidade = dadoLido.toFloat()/1000;
       Serial.println(DadosEnsaio.velocidade);
     }
-  }  
 }

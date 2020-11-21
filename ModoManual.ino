@@ -18,43 +18,55 @@ int modoManual(int X, char *titulo)
     showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
     showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
     showDistancia(DadosEnsaio.distanciaAcumulada);
-	
+    timerStop(timer);
+    
+    configVelocidade();   
+    configTempo();  
+    ZeraTimer();    
     do
-    {       
-      configVelocidade();   
-      configTempo();
-      ZeraTimer();
-       
-      comando==INICIAR;
+    {
       ShowOpcoesModoManual();   
       escolheComando();
-      if (comando==VOLTAR) 
-      {
-        return 1;
-      }
-      // inicia o controle
-      if (comando==INICIAR)
-      {
-		
-        comando = PARAR;
-        ShowOpcoesModoManual();
-        DadosEnsaio.tempo =  DadosEnsaio.config_tempo;
-        ZeraTimer();
-		    // inicia controle em MF
-        while (1)
-        {
-          updateVelocidadeEsteira();
-          showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-          showDistancia(DadosEnsaio.distanciaAcumulada);          
-          DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s; 
-          ShowTempo(DadosEnsaio.tempo);
-          
-          if (enterPressed || DadosEnsaio.tempo == 0){
-            enterPressed = false; 
-            break;
+      switch(comando)
+      {        
+        case INICIAR: 
+          comando = PARAR;  
+          ShowOpcoesModoManual();
+          timerRestart(timer);          
+          // inicia controle em MF atualizando o valor do actualValueInterruptCounter1 
+          do {
+            DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s;
+            if (DadosEnsaio.tempo <= 0) DadosEnsaio.tempo = 0;            
+            ShowTempo(DadosEnsaio.tempo);
+            updateVelocidadeEsteira();
+            showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+            showDistancia(DadosEnsaio.distanciaAcumulada);        
+          }while ((enterPressed==false && (DadosEnsaio.tempo > 0)));
+          // fim do controle de MF    
+          timerStop(timer);
+          enterPressed = false;                 
+          DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s;
+          if (DadosEnsaio.tempo <= 0) 
+          {
+            DadosEnsaio.tempo = 0;
+            ShowTempo(DadosEnsaio.tempo);
+            comando = VOLTAR;  
+            ShowOpcoesModoManual();
+            escolheComando();
+            return 1;
           }
-        }
-      }     
+          ShowTempo(DadosEnsaio.tempo);
+          comando = INICIAR;             
+          break;
+          
+        case VOLTAR:        
+             return 1;             
+            break;
+            
+        case PARAR:
+           timerStop(timer);
+            break;        
+      } 
     }while (comando!=VOLTAR);
     enterPressed = false; 
 }
@@ -162,7 +174,7 @@ void configTempo()
     }
     if(enterPressed) break;
   }
-  enterPressed = false;
-  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
-  ShowTempoConfig(DadosEnsaio.config_tempo);  
+  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
+  ShowTempo(DadosEnsaio.config_tempo);
+  enterPressed = false; 
 }

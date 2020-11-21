@@ -308,6 +308,8 @@ void ShowTempo(long numinter)
   hora1 = ((numinter / 3600) % 10);
   hora2 = ((numinter / 3600) / 10);
 
+  //tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
+
   if (primeiravez == true)
   {
     showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);

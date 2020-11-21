@@ -4,6 +4,11 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+#include "esp_partition.h"
+#include "esp_err.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+
 #include "MenuPrincipal.h"
 #include "Medidas.h"
 #include "Display.h"
@@ -23,6 +28,7 @@
  * 4) enterPressed --> atualizado na int quando for ENTER       *
  * **************************************************************/
 
+
 enum menus {PRINCIPAL,MANUALL,TCFM,TFA};
 enum menus menu;
 
@@ -36,12 +42,16 @@ struct Dados
   float distancia1s;
   long tempo;
   float config_velocidade;
-  long config_tempo;  
+  long config_tempo;
 };
 struct Dados DadosEnsaio;
 struct Dados * pDadosEnsaio = &DadosEnsaio;
 
 bool enterPressed = false;
+
+// acesso ao NVS
+nvs_handle h_nvs;
+esp_err_t err;
 
 /* **************************************************************
 *   FIM DA ESTRUTURA DE DADOS GLOBAIS                            *
@@ -49,14 +59,15 @@ bool enterPressed = false;
 
 /*  aqui ocorre a interrupção toda vez que o botão é pressionado*/
 void IRAM_ATTR isr_enter() {
-  enterPressed = false;
-  delay(200);
-  if (digitalRead(ENTER)==LOW)
-  {
-    delay(100);
-    if (digitalRead(ENTER)==LOW) enterPressed = true;
-    else enterPressed = false;
-  }
+  detachInterrupt(digitalPinToInterrupt(ENTER)); 
+    enterPressed = false;
+    if (digitalRead(ENTER)==LOW)
+    {
+      for (int x=0; x<5000; x++);
+      if (digitalRead(ENTER)==LOW) enterPressed = true;
+      else enterPressed = false;
+    }
+  attachInterrupt(ENTER, isr_enter, FALLING);
 }
 
 #if defined(ARDUINO) && ARDUINO >= 100
