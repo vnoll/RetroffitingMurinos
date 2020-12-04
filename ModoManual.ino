@@ -21,7 +21,12 @@ int modoManual(int X, char *titulo)
     timerStop(timer);
     
     configVelocidade();   
-    configTempo();  
+    configTempo();
+
+    // troca a cor para GELO e reescreve o mesmo valor configurado
+    tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
+    ShowTempo(DadosEnsaio.config_tempo);
+          
     ZeraTimer();    
     do
     {
@@ -32,17 +37,18 @@ int modoManual(int X, char *titulo)
         case INICIAR: 
           comando = PARAR;  
           ShowOpcoesModoManual();
-          timerRestart(timer);          
+          timerRestart(timer);  
+
           // inicia controle em MF atualizando o valor do actualValueInterruptCounter1 
           do {
             DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s;
             if (DadosEnsaio.tempo <= 0) DadosEnsaio.tempo = 0;            
             ShowTempo(DadosEnsaio.tempo);
-            updateVelocidadeEsteira();
             showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-            showDistancia(DadosEnsaio.distanciaAcumulada);        
+            showDistancia(DadosEnsaio.distanciaAcumulada); 
           }while ((enterPressed==false && (DadosEnsaio.tempo > 0)));
-          // fim do controle de MF    
+          // fim do controle de MF   
+
           timerStop(timer);
           enterPressed = false;                 
           DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s;
@@ -174,7 +180,5 @@ void configTempo()
     }
     if(enterPressed) break;
   }
-  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
-  ShowTempo(DadosEnsaio.config_tempo);
   enterPressed = false; 
 }

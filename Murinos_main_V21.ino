@@ -1,21 +1,33 @@
 #include <SPI.h>          // f.k. for Arduino-1.5.2
 #include "Main.h"
 
+
 /*****************************************************************
 parei o projeto de software em 17/11/2020
 Estou usando o VSCode para codificar e uma pasta copia para testar
 As alterações que foram testadas e, se aprovadas, são inseridas no GIT
 O que falta fazer:
-[x] - achar uma maneira de guardar dados permanentemente - NVS
-[ ] - permitir baixar os dados dos ensaios para o PC via serial
+[ ] - permitir baixar os dados dos ensaios para o PC via serial em CSV
 [ ] - criar tela de configuração em cada modo
 [ ] - criar funções de controle no modo manuall
-[ ] - evitar o loop de controle preso num while (WDTimer)
-[ ] - pensar em criar uma pagina estatica WEB para log do sistema
-[ ] - criar opção de relatório do experimento na tela e na WEB
+[x] - evitar o loop de controle preso num while (WDTimer)
+[ ] - enviar logs pela serial o tempo todo
 [ ] - depois disso, então implementar os 2 outros modos de controle
-[ ] - separar melhor as funções de mostrar na tela (show*)
-[ ] - usar a flash para armazenar dados de inicialização ou do experimento (NVS)
+[ ] - separar melhor as funções de mostrar na tela (show_)
+[ ] - mandar dados do ARDUINO NANO para a ESP por uma serial dedicada e não pela mesma de gravação
+[ ] - dados enviados pelo NANO serão velocidade atual em km/h
+
+      INFORMAÇÕES IMPORTANTES
+      =======================
+[ ] - IDE ARDUINO, versão usada: 1.8.1
+      PROCESSADOR ESP-WROOM-32, 40 MHz Flash internal
+      Placa: ESP32 Dev Module
+      upload speed: 921600
+      CPU frequency: 80 MHZ (WiFI/BT)
+      Flash frequency: 40 MHZ
+      Flash Mode: QIO
+      Flash Size: 4MB(32MB)
+[ ] - https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers --> driver serial ESP-WROOM-32
 
 *******************************************************************/
 void setup_NVS()
@@ -69,6 +81,7 @@ void setup_NVS()
 }
 
 
+
 void setup()
 {
   Serial.begin(9600);
@@ -84,8 +97,21 @@ void setup()
   comando = PARAR;
   memset(pDadosEnsaio,0, sizeof(DadosEnsaio)); 
   initTimer();
-  setup_NVS();
+
+  // setup_NVS();
+
+  xTaskCreatePinnedToCore(updateTask_Velocidade,  /* Task function. */
+              "updateTaskVel",        /* String with name of task. */
+              10000,                  /* Stack size in bytes. */
+              NULL,                   /* Parameter passed as input of the task */
+              5,                      /* Priority of the task. */
+              &updateTaskOption,      /* task handle */
+              0);                     /* pinned to core */
+
+  disableCore0WDT();
+  disableCore1WDT();  
 }
+
 
 void loop()
 {  

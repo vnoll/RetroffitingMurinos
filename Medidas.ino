@@ -34,6 +34,7 @@ void ZeraTimer() {
   DadosEnsaio.distancia1s = 0;
 }
 
+/*
 void updateVelocidadeEsteira()  
 {
     Serial.println("update velocidade");
@@ -43,4 +44,27 @@ void updateVelocidadeEsteira()
       DadosEnsaio.velocidade = dadoLido.toFloat()/1000;
       Serial.println(DadosEnsaio.velocidade);
     }
+}
+*/
+
+// read --> https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/wdts.html
+ 
+void updateTask_Velocidade(void * dummy)  
+{
+  TickType_t xLastWakeTime;
+  const TickType_t xFrequency = 1500;
+  xLastWakeTime = xTaskGetTickCount();
+  
+  while (true)
+  {
+    vTaskDelayUntil( &xLastWakeTime, xFrequency );
+    //Serial.println("task update ok");
+    if (Serial.available() > 0)
+    {
+      String dadoLido = Serial.readString();
+      DadosEnsaio.velocidade = dadoLido.toFloat()/1000.0;
+      //Serial.println(DadosEnsaio.velocidade); 
+  
+    }
+  }  
 }

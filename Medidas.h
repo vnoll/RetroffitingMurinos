@@ -24,6 +24,7 @@ void initTimer();
 void timerRefresh();
 void ZeraTimer();
 void updateDistancia();
-void updateVelocidadeEsteira();
+//void updateVelocidadeEsteira();
+void updateTask_Velocidade(void * dummy) ;
 
 #endif

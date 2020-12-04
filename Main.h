@@ -3,6 +3,7 @@
 
 #include "stdlib.h"
 #include "stdio.h"
+#include <esp_task_wdt.h>
 
 #include "esp_partition.h"
 #include "esp_err.h"
@@ -52,6 +53,9 @@ bool enterPressed = false;
 // acesso ao NVS
 nvs_handle h_nvs;
 esp_err_t err;
+
+ // task handler
+ TaskHandle_t updateTaskOption;
 
 /* **************************************************************
 *   FIM DA ESTRUTURA DE DADOS GLOBAIS                            *
