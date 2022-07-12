@@ -1,0 +1,23 @@
+IDE ARDUINO
+===========
+versão usada: 1.8.13
+Bibliotecas a serem carregadas antes de compilar estão na pasta:
+* MCUFRIEND_kbv-master
+* RotaryEncoder-master
+* Adafruit_GFX_Library
+* Adafruit_ILI9341
+
+
+PROCESSADOR ESP-WROOM-32, 40 MHz Flash internal
+DRIVER SILICON LABS CP210X USB TO UART BRIDGE
+
+
+Menu Ferramentas da IDE Arduino
+===============================
+
+Placa: ESP32 Dev Module
+upload speed: 921600
+CPU frequency: 80 MHZ (WiFI/BT)
+Flash frequency: 40 MHZ
+Flash Mode: QIO
+Flash Size: 4MB(32MB)

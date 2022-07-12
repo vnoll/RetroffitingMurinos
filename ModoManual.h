@@ -4,8 +4,7 @@
 #include "Main.h"
 
 int modoManual(int X, char *titulo);
-void escolheComando();
+void escolheComandoManual();
 void configVelocidade();
-void configTempo();
 
 #endif

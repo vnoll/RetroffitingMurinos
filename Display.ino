@@ -1,22 +1,21 @@
 #include "Display.h"
 #include "Medidas.h"
 
-
-void showDistanciaOld(float distancia)
+void showDistanciaOld(float distancia) //Mostra a distância
 {
   static float oldDistancia = 0;
-  if (oldDistancia !=  distancia)
+  if (oldDistancia != distancia) //Comparação de distância
   {
-    // limpa a tela da distancia
+    // Limpa a tela da distancia e atualiza para a nova
     tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
-    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
-    oldDistancia = distancia;
-  }  
+    showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia); //Mostra a atual
+    oldDistancia = distancia;                                     //Primeira recebe atual
+  }
 }
 
-void showDistancia(float distancia)
+void showDistancia(float distancia) //Função de atualização da distância display
 {
-  static bool primeiravez = true;
+  static bool primeiravez = true; //Flag primeiravez
   static float oldDistanciatotal = 0;
   updateDistancia();
   if (primeiravez)
@@ -25,7 +24,7 @@ void showDistancia(float distancia)
     oldDistanciatotal = distancia;
     primeiravez = false;
   }
-  if (oldDistanciatotal !=  distancia)
+  if (oldDistanciatotal != distancia)
   {
     showdist(317, 165, 1, GELO, &FreeSansBold18pt7b, oldDistanciatotal);
     showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
@@ -33,13 +32,13 @@ void showDistancia(float distancia)
   }
 }
 
-void showVelocidadeReal(int x, int y, float vel)
+void showVelocidadeReal(int x, int y, float vel) //Função atualização velocidade display
 {
   static bool primeiravez = true;
   static float oldvelocidade;
   if (primeiravez)
   {
-    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b,vel);
+    showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
     oldvelocidade = vel;
     primeiravez = false;
   }
@@ -51,10 +50,10 @@ void showVelocidadeReal(int x, int y, float vel)
   }
 }
 
-void showVelocidadeDefinida(int x, int y, float vel)
+void showVelocidadeDefinida(int x, int y, float vel) //Função atualização velocidade configurada display
 {
   static float oldvelocidade;
-  static bool primeiravez = true; 
+  static bool primeiravez = true;
   if (primeiravez)
   {
     showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
@@ -69,77 +68,140 @@ void showVelocidadeDefinida(int x, int y, float vel)
   }
 }
 
-void ShowOpcoesModoManual()
+void ShowOpcoes() //Opções de comando
 {
   switch (comando)
   {
-    case INICIAR:
-      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(36, 263, 120, 38, 8, TOMATO);
-      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
-      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
-      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
-      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
-      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
-      break;
+  case INICIAR:
+    tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(36, 263, 120, 38, 8, TOMATO);
+    showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+    tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
+    showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+    tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
+    showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+    break;
 
-    case PARAR:
-      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
-      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
-      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(176, 263, 115, 38, 8, TOMATO);
-      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
-      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
-      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
-      break;
+  case PARAR:
+    tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
+    showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+    tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(176, 263, 115, 38, 8, TOMATO);
+    showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+    tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(311, 263, 130, 38, 8, GREY);
+    showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+    break;
 
-    case VOLTAR:
-      tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
-      showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
-      tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
-      showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
-      tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-      tft.fillRoundRect(311, 263, 130, 38, 8, TOMATO);
-      showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
-      break;
+  case VOLTAR:
+    tft.drawRoundRect(35, 262, 122, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(36, 263, 120, 38, 8, GREY);
+    showmsg(50, 290, 1, GELO, &FreeSansBold12pt7b, "INICIAR");
+    tft.drawRoundRect(175, 262, 117, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(176, 263, 115, 38, 8, GREY);
+    showmsg(190, 290, 1, GELO, &FreeSansBold12pt7b, "PARAR");
+    tft.drawRoundRect(310, 262, 132, 40, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(311, 263, 130, 38, 8, TOMATO);
+    showmsg(325, 290, 1, GELO, &FreeSansBold12pt7b, "VOLTAR");
+    break;
   }
 }
 
+/* Telas para cada modo de operação */
+
 void showTelaModoManual(int X, char *titulo)
 {
-    tft.fillScreen(KHAKI);//LIMPA A TELA
-    tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(81, 6, 313, 43, 8, LGREEN);
-    showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
+  tft.fillScreen(KHAKI);                       //LIMPA A TELA
+  tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(81, 6, 313, 43, 8, LGREEN);
+  showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
 
-    tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(21, 56, 273, 53, 8, GELO);
-    showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
-    tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
-    tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(386, 56, 78, 53, 8, GELO);
+  tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 56, 273, 53, 8, GELO);
+  showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
+  tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+  tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(386, 56, 78, 53, 8, GELO);
 
-    tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
-    showmsg(98, 160, 1, BLACK, &FreeSansBold12pt7b, "DISTANCIA (m): ");
-    tft.drawRoundRect(305, 125, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(306, 126, 158, 53, 8, GELO);
+  tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
+  showmsg(98, 160, 1, BLACK, &FreeSansBold12pt7b, "DISTANCIA (m): ");
+  tft.drawRoundRect(305, 125, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 126, 158, 53, 8, GELO);
 
-    tft.drawRoundRect(20, 195, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(21, 196, 273, 53, 8, GELO);
-    showmsg(150, 230, 1, BLACK, &FreeSansBold12pt7b, "TEMPO (s): ");
-    tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-    tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
-  
+  tft.drawRoundRect(20, 195, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 196, 273, 53, 8, GELO);
+  showmsg(150, 230, 1, BLACK, &FreeSansBold12pt7b, "TEMPO (s): ");
+  tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
 }
 
+void showTelaModoTCFM(int X, char *titulo)
+{
+  tft.fillScreen(KHAKI);                       //LIMPA A TELA
+  tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
+  showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
+
+  tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 56, 273, 53, 8, GELO);
+  showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
+  tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+
+  tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
+  showmsg(98, 160, 1, BLACK, &FreeSansBold12pt7b, "DISTANCIA (m): ");
+  tft.drawRoundRect(305, 125, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 126, 158, 53, 8, GELO);
+
+  tft.drawRoundRect(20, 195, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 196, 273, 53, 8, GELO);
+  showmsg(150, 230, 1, BLACK, &FreeSansBold12pt7b, "TEMPO (s): ");
+  tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
+}
+
+void showTelaModoTFA(int X, char *titulo)
+{
+  tft.fillScreen(KHAKI);                       //LIMPA A TELA
+  tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(81, 6, 313, 43, 8, LGREEN);
+  showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
+
+  tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 56, 273, 53, 8, GELO);
+  showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
+  tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+  tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(386, 56, 78, 53, 8, GELO);
+
+  tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
+  showmsg(98, 160, 1, BLACK, &FreeSansBold12pt7b, "DISTANCIA (m): ");
+  tft.drawRoundRect(305, 125, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 126, 158, 53, 8, GELO);
+
+  tft.drawRoundRect(20, 195, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(21, 196, 273, 53, 8, GELO);
+  showmsg(150, 230, 1, BLACK, &FreeSansBold12pt7b, "TEMPO (s): ");
+  tft.drawRoundRect(305, 195, 160, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
+}
+
+void ShowVelocidade()
+{
+  tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+  Serial.println();
+  Serial.print("Velocidade:");
+  Serial.print(DadosEnsaio.velocidade);
+  Serial.print("km/h");
+}
 void ShowTempoConfig(long TEMPOTOTAL)
 {
   long seg1, seg2;
@@ -233,7 +295,7 @@ void ShowTempoConfigOld(long TEMPOTOTAL)
 
   // limpa a tela filling it
   tft.fillRoundRect(306, 196, 158, 53, 8, LGREEN);
-  
+
   showtempo(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
   showtempo(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
   showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
@@ -243,7 +305,7 @@ void ShowTempoConfigOld(long TEMPOTOTAL)
   showtempo(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
   showtempo(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
-    // atualiza
+  // atualiza
   oldseg1 = seg1;
   oldseg2 = seg2;
   oldmin1 = min1;
@@ -260,7 +322,7 @@ void ShowTempoOld(long numinter)
   static int oldseg1 = 0, oldseg2 = 0;
   static int oldmin1 = 0, oldmin2 = 0;
   static int oldhora1 = 0, oldhora2 = 0;
-  
+
   seg1 = ((numinter % 60) % 10);
   seg2 = ((numinter % 60) / 10);
   min1 = ((numinter / 60) % 10);
@@ -271,44 +333,41 @@ void ShowTempoOld(long numinter)
   // limpa a tela filling it
   tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
 
-    // escreve os novos
-    showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
-    showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
-    showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
-    showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
-    showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
-    showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
-    showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
+  // escreve os novos
+  showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
+  showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
+  showmsg(405, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+  showint(385, 235, 1, BLACK, &FreeSansBold18pt7b, min1);
+  showint(365, 235, 1, BLACK, &FreeSansBold18pt7b, min2);
+  showmsg(355, 233, 1, BLACK, &FreeSansBold18pt7b, ":");
+  showint(335, 235, 1, BLACK, &FreeSansBold18pt7b, hora1);
+  showint(315, 235, 1, BLACK, &FreeSansBold18pt7b, hora2);
 
-    // atualiza
-    oldseg1 = seg1;
-    oldseg2 = seg2;
-    oldmin1 = min1;
-    oldmin2 = min2;
-    oldhora1 = hora1;
-    oldhora2 = hora2;
-
+  // atualiza
+  oldseg1 = seg1;
+  oldseg2 = seg2;
+  oldmin1 = min1;
+  oldmin2 = min2;
+  oldhora1 = hora1;
+  oldhora2 = hora2;
 }
 
 void ShowTempo(long numinter)
 {
-  static bool primeiravez = true; 
+  static bool primeiravez = true;
   int seg1, seg2;
   int min1, min2;
   int hora1, hora2;
   static int oldseg1 = 0, oldseg2 = 0;
   static int oldmin1 = 0, oldmin2 = 0;
   static int oldhora1 = 0, oldhora2 = 0;
-  
+
   seg1 = ((numinter % 60) % 10);
   seg2 = ((numinter % 60) / 10);
   min1 = ((numinter / 60) % 10);
   min2 = (((numinter / 60) / 10) % 6);
   hora1 = ((numinter / 3600) % 10);
   hora2 = ((numinter / 3600) / 10);
-
-  //tft.fillRoundRect(306, 196, 158, 53, 8, GELO);  
 
   if (primeiravez == true)
   {
@@ -357,11 +416,10 @@ void ShowTempo(long numinter)
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-
   }
 }
 
-void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont * f, long t)
+void showtempo(int x, int y, int sz, uint16_t color, const GFXfont *f, long t)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -370,7 +428,7 @@ void showtempo(int x, int y, int sz, uint16_t color,  const GFXfont * f, long t)
   tft.printf("%ld", t);
 }
 
-void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *msg)
+void showmsg(int x, int y, int sz, uint16_t color, const GFXfont *f, const char *msg)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -379,7 +437,7 @@ void showmsg(int x, int y, int sz, uint16_t color,  const GFXfont * f, const cha
   tft.print(msg);
 }
 
-void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont * f, const char *txt, const char *msg)
+void showmsgf(int x, int y, int sz, uint16_t color, const GFXfont *f, const char *txt, const char *msg)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -389,7 +447,7 @@ void showmsgf(int x, int y, int sz, uint16_t color,  const GFXfont * f, const ch
   tft.printf("%s", msg);
 }
 
-void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t)
+void showint(int x, int y, int sz, uint16_t color, const GFXfont *f, int t)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -398,7 +456,7 @@ void showint(int x, int y, int sz, uint16_t color,  const GFXfont * f, int t)
   tft.printf("%d", t);
 }
 
-void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
+void showfloat(int x, int y, int sz, uint16_t color, const GFXfont *f, float t)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -407,7 +465,7 @@ void showfloat(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t
   tft.printf("%.1f", t);
 }
 
-void showdist(int x, int y, int sz, uint16_t color,  const GFXfont * f, float t)
+void showdist(int x, int y, int sz, uint16_t color, const GFXfont *f, float t)
 {
   tft.setFont(f);
   tft.setCursor(x, y);
@@ -427,9 +485,10 @@ void showAbertura()
   tft.drawFastHLine(107, 125, 260, BLACK);
   showmsg(110, 160, 1, BLACK, &FreeSerif18pt7b, "Desenvolvido pelo ");
   showmsg(55, 200, 1, BLACK, &FreeSerif18pt7b, "IFSC - Mecatronica - FLN");
-  showmsg(250, 300, 1, BLACK, &FreeSerifBold18pt7b, "UDESC/2020");
+  showmsg(250, 310, 1, BLACK, &FreeSerifBold18pt7b, "UDESC/2020");
   showmsg(40, 240, 1, BLACK, &FreeSerifBold12pt7b, "Edwan Seiki Kuwakino");
-  showmsg(40, 260, 1, BLACK, &FreeSerifBold12pt7b, "Lucas Terres Hoffmann");
-  showmsg(40, 280, 1, BLACK, &FreeSerifBold12pt7b, "Valdir Noll");
+  showmsg(40, 260, 1, BLACK, &FreeSerifBold12pt7b, "Leonardo Goncalves Rosa");
+  showmsg(40, 280, 1, BLACK, &FreeSerifBold12pt7b, "Lucas Terres Hoffmann");
+  showmsg(40, 300, 1, BLACK, &FreeSerifBold12pt7b, "Valdir Noll");
   delay(5000);
 }
