@@ -13,6 +13,7 @@ int modoManual(int X, char *titulo)
   DadosEnsaio.config_velocidade = 0.5;
 
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+  tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
   showDistancia(DadosEnsaio.distanciaAcumulada);
   timerStop(timer);
@@ -26,8 +27,8 @@ int modoManual(int X, char *titulo)
     {
     case INICIAR:
       flagFuncionamento = true;
-      onOff();
       flagOn = true;
+      onOff();
       comando = PARAR;
       ShowOpcoes();
       timerRestart(timer);
@@ -35,21 +36,21 @@ int modoManual(int X, char *titulo)
       // Inicialização do controle da esteira
       do
       {
-
         DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
         ShowTempo(DadosEnsaio.tempo);
         showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
         showDistancia(DadosEnsaio.distanciaAcumulada);
-        showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
 
+        showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+        updateVelocidadeEsteira();
+        
         encoder.tick();
         newPos = encoder.getPosition();
         if (pos != newPos)
         {
           configVelocidade();
-          showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
-        }
-        showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+          //showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+        }      
 
       } while ((enterPressed == false && comando != VOLTAR));
 
@@ -122,19 +123,20 @@ void escolheComandoManual()
 
 void configVelocidade()
 {
+  static int primeiravez =0;
   float newvelo = DadosEnsaio.config_velocidade;
   static RotaryEncoder::Direction lastMovementDirection = RotaryEncoder::Direction::NOROTATION;
   //Lê a posição do encoder e compara com a anterior
 
-  tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
-  tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
-  showVelocidadeDefinida(402, 95, newvelo);
-
-  while (true)
-  {
-    encoder.tick();
-    RotaryEncoder::Direction currentDirection = encoder.getDirection();
-    if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
+  if (primeiravez == 0) {
+    tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+    tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
+    showVelocidadeDefinida(402, 95, newvelo);
+    primeiravez = 1;
+  }
+  encoder.tick();
+  RotaryEncoder::Direction currentDirection = encoder.getDirection();
+  if (currentDirection == RotaryEncoder::Direction::CLOCKWISE)
     {
       newvelo = newvelo + 0.1;
 
@@ -142,19 +144,17 @@ void configVelocidade()
       {
         newvelo = 0.5;
       }
-      showVelocidadeDefinida(402, 95, newvelo);
+      //showVelocidadeDefinida(402, 95, newvelo);
     }
-    if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
+  if (currentDirection == RotaryEncoder::Direction::COUNTERCLOCKWISE)
     {
       newvelo = newvelo - 0.1;
       if (newvelo < 0.5 || newvelo == -0.1)
       {
         newvelo = (5);
       }
-      showVelocidadeDefinida(402, 95, newvelo);
+      //showVelocidadeDefinida(402, 95, newvelo);
     }
-    break;
-  }
   DadosEnsaio.config_velocidade = newvelo;
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade); 
 }

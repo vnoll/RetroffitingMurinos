@@ -1,6 +1,16 @@
 
+
+
 int modoTCFM(int X, char *titulo)
 {
+  long valorControle[45] = {300,450,600,750,900,1050,1200,1350,1500,1650,1800,1950,2100,2250,2400,2550,2700,
+                          2850,3000,3150,3300,3450,3600,3750,3900,4050,4200,4350,4500,4650,4800,4950,5100,
+                          5250,5400,5550,5700,5850,6000,6150,6300,6450,6600,6750,6900};
+  int flag_entrou = 1;
+  long tempoEnsaio = 0;
+  long tempoEnsaioAnterior = 0;
+  int idx = 0;
+  
   comando = PARAR;
   menu = TCFM;
   encoder.setPosition(2);
@@ -9,10 +19,10 @@ int modoTCFM(int X, char *titulo)
   ShowOpcoes();
 
   DadosEnsaio.distanciaAcumulada = 0.0;
-  DadosEnsaio.velocidade = 0;
-  DadosEnsaio.tempo = 0.0;
+  DadosEnsaio.velocidade = 0.0;
+  DadosEnsaio.tempo = 0;
   DadosEnsaio.config_velocidade = 0.5;
-  DadosEnsaio.config_tempo = 0.0;
+  DadosEnsaio.config_tempo = 0;
 
   ZeraTimer();
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
@@ -34,6 +44,7 @@ int modoTCFM(int X, char *titulo)
     case INICIAR:
       flagFuncionamento = true;
       flagOn = true;
+      onOff();
       comando = PARAR;
       ShowOpcoes();
       timerRestart(timer);
@@ -48,31 +59,30 @@ int modoTCFM(int X, char *titulo)
         showDistancia(DadosEnsaio.distanciaAcumulada);
         updateVelocidadeEsteira();
 
-        if (DadosEnsaio.tempo ==  300 || DadosEnsaio.tempo == 450  || DadosEnsaio.tempo == 600  || DadosEnsaio.tempo == 750  ||
-            DadosEnsaio.tempo ==  900 || DadosEnsaio.tempo == 1050 || DadosEnsaio.tempo == 1200 || DadosEnsaio.tempo == 1350 ||
-            DadosEnsaio.tempo == 1500 || DadosEnsaio.tempo == 1650 || DadosEnsaio.tempo == 1800 || DadosEnsaio.tempo == 1950 ||
-            DadosEnsaio.tempo == 2100 || DadosEnsaio.tempo == 2250 || DadosEnsaio.tempo == 2400 || DadosEnsaio.tempo == 2550 ||
-            DadosEnsaio.tempo == 2700 || DadosEnsaio.tempo == 2850 || DadosEnsaio.tempo == 3000 || DadosEnsaio.tempo == 3150 ||
-            DadosEnsaio.tempo == 3300 || DadosEnsaio.tempo == 3450 || DadosEnsaio.tempo == 3600 || DadosEnsaio.tempo == 3750 ||
-            DadosEnsaio.tempo == 3900 || DadosEnsaio.tempo == 4050 || DadosEnsaio.tempo == 4200 || DadosEnsaio.tempo == 4350 ||
-            DadosEnsaio.tempo == 4500 || DadosEnsaio.tempo == 4650 || DadosEnsaio.tempo == 4800 || DadosEnsaio.tempo == 4950 ||
-            DadosEnsaio.tempo == 5100 || DadosEnsaio.tempo == 5250 || DadosEnsaio.tempo == 5400 || DadosEnsaio.tempo == 5550 ||
-            DadosEnsaio.tempo == 5700 || DadosEnsaio.tempo == 5850 || DadosEnsaio.tempo == 6000 || DadosEnsaio.tempo == 6150 ||
-            DadosEnsaio.tempo == 6300 || DadosEnsaio.tempo == 6450 || DadosEnsaio.tempo == 6600 || DadosEnsaio.tempo == 6750 ||
-            DadosEnsaio.tempo == 6900)
-
+        tempoEnsaio = DadosEnsaio.tempo;
+             
+        if (flag_entrou ==0)
         {
+          if (tempoEnsaio != tempoEnsaioAnterior) flag_entrou =1;
+        }
+
+        if (tempoEnsaio == valorControle[idx] && flag_entrou== 1)
+        {
+          flag_entrou = 0;
+          idx++;
+          if (idx > 45) idx = 0;
+          tempoEnsaioAnterior = tempoEnsaio;
           DadosEnsaio.config_velocidade += 0.1;
           DadosEnsaio.velocidade = DadosEnsaio.config_velocidade;
           updateVelocidadeEsteira();
-          ShowVelocidade();
+          //ShowVelocidade();
           DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
           ShowTempo(DadosEnsaio.tempo);
           showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
           showDistancia(DadosEnsaio.distanciaAcumulada);
         }
 
-      } while ((enterPressed == false && (DadosEnsaio.velocidade <= 5)));
+      } while ((enterPressed == false && (DadosEnsaio.velocidade <= 5.0)));
       // Fim do controle de MF
 
       timerStop(timer);
@@ -80,6 +90,9 @@ int modoTCFM(int X, char *titulo)
       DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
       if (DadosEnsaio.tempo <= 10000)
       {
+        flagFuncionamento = false;
+        flagOn = false;
+        onOff();
         ShowTempo(DadosEnsaio.tempo);
         comando = VOLTAR;
         ShowOpcoes();
@@ -93,12 +106,14 @@ int modoTCFM(int X, char *titulo)
     case VOLTAR:
       flagFuncionamento = false;
       flagOn = false;
+      onOff();
       return 1;
       break;
 
     case PARAR:
       flagFuncionamento = false;
       flagOn = false;
+      onOff();
       timerStop(timer);
       break;
     }

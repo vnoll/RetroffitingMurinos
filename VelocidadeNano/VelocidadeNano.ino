@@ -24,6 +24,7 @@ void loop()
   float speedkmh = ((1.000 * speed * 0.1885 * 0.051) * 0.335); // Equação velocidade, que é rotação * 0.1885 * diametro em metros
   //33.5 % a menos em relacao a outra polia
 
+ // Serial.println(speedkmh);
   Serial.write((byte *)&speedkmh, 4);
   contador_pulso = 0.000; // Limpa sempre que mostrar a nova contagem
   delay(500); //Envio a cada 1 segundo

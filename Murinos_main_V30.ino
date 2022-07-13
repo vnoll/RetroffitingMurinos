@@ -21,6 +21,7 @@
 #define DESL_TITULO_DISPLAY_MODO_TCFM 25
 
 unsigned long tempoState = millis();
+unsigned long tempoModoTCFM = millis();
 
 
 

@@ -40,7 +40,7 @@ void updateVelocidadeEsteira()
 {
 
   float offset = 0.10;
-  float offset2 = 0.01;
+  float offset2 = 0.03;
 
   switch (Velocidade)
   {
