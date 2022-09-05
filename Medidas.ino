@@ -46,7 +46,7 @@ void updateVelocidadeEsteira()
   {
   case aumentarVelocidade:
 
-    digitalWrite(menosVelo,LOW);
+    digitalWrite(menosVelo, LOW);
 
     if (millis() - tempoState < 200)
     {
@@ -62,7 +62,7 @@ void updateVelocidadeEsteira()
       tempoState = millis();
     }
 
-    if  ((DadosEnsaio.config_velocidade - offset2) <= DadosEnsaio.velocidade || DadosEnsaio.velocidade == DadosEnsaio.config_velocidade)
+    if ((DadosEnsaio.config_velocidade - offset2) <= DadosEnsaio.velocidade || DadosEnsaio.velocidade == DadosEnsaio.config_velocidade)
     {
       flagFuncionamento = false;
       Velocidade = mesmaVelocidade;
@@ -76,7 +76,7 @@ void updateVelocidadeEsteira()
     break;
 
   case diminuirVelocidade:
-    digitalWrite(maisVelo,LOW);
+    digitalWrite(maisVelo, LOW);
     flagFuncionamento = false;
     if (millis() - tempoState < 200)
     {
@@ -92,7 +92,7 @@ void updateVelocidadeEsteira()
       tempoState = millis();
     }
     if (DadosEnsaio.config_velocidade == DadosEnsaio.velocidade || DadosEnsaio.velocidade <= (DadosEnsaio.config_velocidade + offset2))
-    
+
     {
       flagFuncionamento = false;
       Velocidade = mesmaVelocidade;
@@ -106,8 +106,8 @@ void updateVelocidadeEsteira()
 
   case mesmaVelocidade:
   {
-    digitalWrite(menosVelo,LOW);
-    digitalWrite(maisVelo,LOW);
+    digitalWrite(menosVelo, LOW);
+    digitalWrite(maisVelo, LOW);
     flagFuncionamento = false;
     if (millis() - tempoState < 200)
     {
@@ -146,7 +146,7 @@ void updateVelocidadeEsteira()
 }
 
 /* Função de atualização da velocidade recebendo via serial do Arduino Nano */
-void updateTask_Velocidade(void *dummy)
+ /* void updateTask_Velocidade(void *dummy)
 {
   TickType_t xLastWakeTime;
   const TickType_t xFrequency = 500;
@@ -154,7 +154,10 @@ void updateTask_Velocidade(void *dummy)
 
   while (true)
   {
+
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
+
+    /*
     if (Serial1.available() > 0)
     {
       delay(5);
@@ -170,17 +173,59 @@ void updateTask_Velocidade(void *dummy)
       DadosEnsaio.velocidade = received;
     }
   }
+  
+
+    RPM = contador_pulso / 1000.00 * 60.00;
+    speedkmh = ((1.000 * RPM * 0.1885 * 0.051) * 0.665);
+    DadosEnsaio.velocidade = speedkmh;
+  }
 }
+
+*/
+
+void encoderPinoB()
+{
+  static char flag = 0;
+  static char numPeriodsToSendSerial = 0;
+   contador_pulso++;
+   if (flag == 0) {digitalWrite(encoder_b2, HIGH); flag =1;}
+   else {digitalWrite(encoder_b2, LOW); flag =0;}
+
+  if (micros() - lastTime >= 100000)
+  {    
+    numPeriodsToSendSerial++;
+    // calcula o valor da velocidade baseada no numero de pulsos em 100ms
+    //RPM = contador_pulso / 1000.00 * 60.00;
+    //speedkmh = ((1.000 * RPM * 0.1885 * 0.051) * 0.665);
+
+    //Serial.println(contador_pulso);
+    
+    //RPM = (contador_pulso/1000.00)*2.0*3.141516*25.50;
+    //speedkmh = (RPM/1000.00)*3.6*52.00/160.00*10;
+    speedkmh = contador_pulso*0.0018745;
+    DadosEnsaio.velocidade = speedkmh;
+
+    lastTime = micros();
+    contador_pulso = 0;
+
+    if (numPeriodsToSendSerial >=30)
+    {
+        Serial.println(DadosEnsaio.velocidade);
+        numPeriodsToSendSerial = 0;
+    }    
+  }
+}
+
 
 void onOff()
 {
-  if(flagOn == true)
+  if (flagOn == true)
   {
-    digitalWrite (botaoEmergencia, LOW);
+    digitalWrite(botaoEmergencia, LOW);
   }
-  if(flagOn == false)
+  if (flagOn == false)
   {
-    digitalWrite (botaoEmergencia, HIGH);
+    digitalWrite(botaoEmergencia, HIGH);
   }
 
   return;

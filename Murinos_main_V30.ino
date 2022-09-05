@@ -3,7 +3,7 @@
 #include "stdlib.h" //Biblioteca de funções gerais e macro
 #include "stdio.h"
 #include <esp_task_wdt.h>   //WatchDogTime da ESP
-#include <HardwareSerial.h> // Inclusão biblioteca modificada para comunicação com o Nano
+//#include <HardwareSerial.h> // Inclusão biblioteca modificada para comunicação com o Nano
 
 #include "MenuPrincipal.h"
 #include "Medidas.h"
@@ -15,6 +15,8 @@
 #define maisVelo 18  // Porta saida aumentar controle de  velocidade
 #define menosVelo 19 //Porta saida diminuir controle de velocidade
 #define botaoEmergencia 23 //Porta saída botão de liga e desliga
+#define encoder_b1 21
+#define encoder_b2 5
 
 #define DESL_TITULO_DISPLAY_MODO_MANUAL -2
 #define DESL_TITULO_DISPLAY_MODO_TFA 40
@@ -22,7 +24,6 @@
 
 unsigned long tempoState = millis();
 unsigned long tempoModoTCFM = millis();
-
 
 
 /*****************************************************************
@@ -51,7 +52,10 @@ void setup()
   digitalWrite(maisVelo, LOW);
   digitalWrite(menosVelo, LOW);
   digitalWrite(botaoEmergencia,HIGH);
+  pinMode(ENCODER_MOTOR_PIN, INPUT);
+  pinMode(encoder_b2, OUTPUT);
 
+  attachInterrupt(ENCODER_MOTOR_PIN, encoderPinoB, RISING);
   attachInterrupt(ENTER, isr_enter, FALLING);
   uint16_t ID = tft.readID();
   tft.begin(ID);
@@ -65,13 +69,17 @@ void setup()
   memset(pDadosEnsaio, 0, sizeof(DadosEnsaio));
   initTimer();
 
-  xTaskCreatePinnedToCore(updateTask_Velocidade, /* Task function. */
-                          "updateTaskVel",       /* String with name of task. */
-                          10000,                 /* Stack size in bytes. */
-                          NULL,                  /* Parameter passed as input of the task */
-                          5,                     /* Priority of the task. */
-                          &updateTaskOption,     /* task handle */
-                          0);                    /* pinned to core */
+  
+
+  //xTaskCreatePinnedToCore(updateTask_Velocidade, /* Task function. */
+  //                        "updateTaskVel",       /* String with name of task. */
+  //                        10000,                 /* Stack size in bytes. */
+  //                        NULL,                  /* Parameter passed as input of the task */
+  //                        5,                     /* Priority of the task. */
+  //                        &updateTaskOption,     /* task handle */
+  //                        0);                    /* pinned to core */
+                          
+
 
   disableCore0WDT();
   disableCore1WDT();

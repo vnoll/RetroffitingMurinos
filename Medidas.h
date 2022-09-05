@@ -9,6 +9,7 @@
 #define ENCODER_DT 34  //Posisão do Pino DT
 #define ENCODER_CLK 39 //Posição do Pino CLK
 #define ENTER 35       //Posição Pino Enter
+#define ENCODER_MOTOR_PIN 21
 #define timermaximo 43200
 
 RotaryEncoder encoder(ENCODER_DT, ENCODER_CLK);
@@ -18,6 +19,11 @@ int Counter1Min = 0;
 int Counter1Hour = 0;
 int pos = 1;
 int newPos = 1;
+int contador_pulso = 0;
+float RPM = 0.0;
+float speedkmh = 0.0;
+
+unsigned long lastTime = micros();
 
 hw_timer_t *timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
@@ -29,6 +35,8 @@ void updateDistancia();         //Função de atualização da distância em rel
 void updateVelocidadeEsteira(); //Função de controle de velocidade da esteira
 void updateTask_Velocidade();   //Função de atualização e recebimento da velocidade atual através do Nano
 void onOff();                   //Função de ligar e desligar o relé de acionamento
+void encoderPinoB();
+
 
 
 
