@@ -3,8 +3,7 @@
 
 #include "stdlib.h"
 #include "stdio.h"
-#include <esp_task_wdt.h> 
-
+#include <esp_task_wdt.h>
 #include "MenuPrincipal.h"
 #include "Medidas.h"
 #include "Display.h"
@@ -24,6 +23,8 @@
  * 2) comando --> Indicação comando selecionado                 *
  * 3) DadosEnsaio --> Estrutura que mantém os dados atuais      *
  * 4) enterPressed --> atualizado na int quando for ENTER       *
+ * 5) velocidade --> indica se deve aumentar, diminuir ou       *
+ *                   manter a velocidade                        *
  * **************************************************************/
 
 enum menus

@@ -12,7 +12,7 @@ void menuPrincipal()
 
 void desenhaTitulo()
 {
-  tft.fillScreen(LBLUE);                                         //limpa a tela
+  tft.fillScreen(LBLUE);                                         // limpa a tela
   tft.drawRoundRect(143, 11, 200, 50, 6, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(144, 12, 198, 48, 4, DORANGE);
   showmsg(163, 50, 2, BLACK, &FreeSansBold12pt7b, "M");
@@ -30,7 +30,7 @@ void imprimeMenu()
 {
   switch (menu)
   {
-  case MANUALL:                                    //CURSOR EM MODO MANUAL
+  case MANUALL:                                    // CURSOR EM MODO MANUAL
     tft.drawRoundRect(80, 80, 320, 60, 10, WHITE); // (x, y, largura, altura, arredondamento)
     tft.fillRoundRect(81, 81, 318, 58, 8, DBLUE);
     showmsg(112, 120, 1, GELO, &FreeSansBold18pt7b, "Modo MANUAL");
@@ -45,7 +45,7 @@ void imprimeMenu()
     showmsg(155, 280, 1, BLACK, &FreeSansBold18pt7b, "Modo TFA");
     break;
 
-  case TCFM:                                        //CURSOR EM MODO TCFM
+  case TCFM:                                        // CURSOR EM MODO TCFM
     tft.drawRoundRect(80, 160, 320, 60, 10, WHITE); // (x, y, largura, altura, arredondamento)
     tft.fillRoundRect(81, 161, 318, 58, 8, DBLUE);
     showmsg(140, 200, 1, GELO, &FreeSansBold18pt7b, "Modo TCFM");
@@ -60,7 +60,7 @@ void imprimeMenu()
     showmsg(155, 280, 1, BLACK, &FreeSansBold18pt7b, "Modo TFA");
     break;
 
-  case TFAA:                                        //CURSOR EM MODO MANUAL TFA
+  case TFAA:                                        // CURSOR EM MODO MANUAL TFA
     tft.drawRoundRect(80, 240, 320, 60, 10, WHITE); // (x, y, largura, altura, arredondamento)
     tft.fillRoundRect(81, 241, 318, 58, 8, DBLUE);
     showmsg(155, 280, 1, GELO, &FreeSansBold18pt7b, "Modo TFA");
@@ -82,19 +82,19 @@ void escolheOpcao()
   unsigned char pos_atual_encoder = 0;
   while (true)
   {
-    //Lê a posição do encoder e compara com a anterior
+    // Lê a posição do encoder e compara com a anterior
     encoder.tick();
     newPos = encoder.getPosition();
 
     if (pos != newPos)
     {
-      //Limite maximo menu
+      // Limite maximo menu
       if (newPos > 3)
       {
         encoder.setPosition(1);
         newPos = 1;
       }
-      //Limite minimo menu
+      // Limite minimo menu
       if (newPos < 1)
       {
         encoder.setPosition(3);

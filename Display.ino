@@ -197,10 +197,12 @@ void ShowVelocidade()
 {
   tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+  /*
   Serial.println();
   Serial.print("Velocidade:");
   Serial.print(DadosEnsaio.velocidade);
   Serial.print("km/h");
+  */
 }
 void ShowTempoConfig(long TEMPOTOTAL)
 {
@@ -219,6 +221,7 @@ void ShowTempoConfig(long TEMPOTOTAL)
   hora1 = ((TEMPOTOTAL / 3600) % 10);
   hora2 = ((TEMPOTOTAL / 3600) / 10);
 
+  /*
   Serial.print(hora2);
   Serial.print(hora1);
   Serial.print(":");
@@ -227,6 +230,7 @@ void ShowTempoConfig(long TEMPOTOTAL)
   Serial.print(":");
   Serial.print(seg2);
   Serial.println(seg1);
+  */
 
   if (primeiravez)
   {
@@ -492,3 +496,21 @@ void showAbertura()
   showmsg(40, 300, 1, BLACK, &FreeSerifBold12pt7b, "Valdir Noll");
   delay(5000);
 }
+
+// enviar sequencialmente LABEL,Hora,Velocidade Definida(km/h),Velocidade Real (km/h),Distancia (m),Tempo (s)
+void PrintDataSERIAL4Debug()
+{
+    static long tempo = interruptCounter1s;
+    static long tempo_anterior = 0;
+    if ((tempo != 0) && (tempo != tempo_anterior))
+    {
+      /*
+      Serial.print(DadosEnsaio.config_velocidade);Serial.print(',');
+      Serial.print(DadosEnsaio.velocidade);Serial.print(',');
+      Serial.print(DadosEnsaio.distanciaAcumulada);Serial.print(',');
+      Serial.println(DadosEnsaio.tempo);
+      */
+      tempo_anterior = tempo;
+    }
+}
+

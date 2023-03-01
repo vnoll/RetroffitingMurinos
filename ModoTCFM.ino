@@ -3,9 +3,16 @@
 
 int modoTCFM(int X, char *titulo)
 {
-  long valorControle[45] = {300,450,600,750,900,1050,1200,1350,1500,1650,1800,1950,2100,2250,2400,2550,2700,
-                          2850,3000,3150,3300,3450,3600,3750,3900,4050,4200,4350,4500,4650,4800,4950,5100,
-                          5250,5400,5550,5700,5850,6000,6150,6300,6450,6600,6750,6900};
+  // valor real
+  //long valorControle[45] = {300,450,600,750,900,1050,1200,1350,1500,1650,1800,1950,2100,2250,2400,2550,2700,
+  //                        2850,3000,3150,3300,3450,3600,3750,3900,4050,4200,4350,4500,4650,4800,4950,5100,
+  //                        5250,5400,5550,5700,5850,6000,6150,6300,6450,6600,6750,6900};
+
+  // para testes 10x menos velocidade
+  long valorControle[45] = {30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,
+                          285,300,315,330,345,360,375,390,405,420,435,450,465,480,495,510,
+                         525,540,555,570,585,600,615,630,645,660,675,690};
+
   int flag_entrou = 1;
   long tempoEnsaio = 0;
   long tempoEnsaioAnterior = 0;
@@ -60,25 +67,31 @@ int modoTCFM(int X, char *titulo)
         updateVelocidadeEsteira();
 
         tempoEnsaio = DadosEnsaio.tempo;
+
+        PrintDataSERIAL4Debug();    
              
-        if (flag_entrou ==0)
+        if (flag_entrou == 0)
         {
-          if (tempoEnsaio != tempoEnsaioAnterior) flag_entrou =1;
+          if (tempoEnsaio != tempoEnsaioAnterior) flag_entrou = 1;
         }
 
-        if (tempoEnsaio == valorControle[idx] && flag_entrou== 1)
+        if ((tempoEnsaio >= valorControle[idx]) && (flag_entrou == 1))
         {
           flag_entrou = 0;
           idx++;
-          if (idx > 45) idx = 0;
+          if (idx >= 45) {
+            idx = 0;
+            break;
+          }
           tempoEnsaioAnterior = tempoEnsaio;
           DadosEnsaio.config_velocidade += 0.1;
-          DadosEnsaio.velocidade = DadosEnsaio.config_velocidade;
+          //DadosEnsaio.velocidade = DadosEnsaio.config_velocidade;
           updateVelocidadeEsteira();
           //ShowVelocidade();
           DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
           ShowTempo(DadosEnsaio.tempo);
           showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+          showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
           showDistancia(DadosEnsaio.distanciaAcumulada);
         }
 

@@ -26,11 +26,8 @@ MCUFRIEND_kbv tft;
 
 #define BLACK 0x0000 //Definição das cores em hexa
 #define BLUE 0x001F
-#define RED 0xF800
-#define GREEN 0x07E0
-#define CYAN 0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW 0xFFE0
+
+
 #define WHITE 0xFFFF
 #define LBLUE 0x7E7E
 #define LGREEN 0XBFCF
@@ -66,5 +63,6 @@ void showint(int x, int y, int sz, uint16_t color, const GFXfont *f, int t);
 void showfloat(int x, int y, int sz, uint16_t color, const GFXfont *f, float t);
 void showdist(int x, int y, int sz, uint16_t color, const GFXfont *f, float t);
 void showAbertura();
+void PrintDataSERIAL4Debug();
 
 #endif

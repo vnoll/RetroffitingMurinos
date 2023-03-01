@@ -57,6 +57,7 @@ int modoTFA(int X, char *titulo)
         updateVelocidadeEsteira();
         showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
         showDistancia(DadosEnsaio.distanciaAcumulada);
+        PrintDataSERIAL4Debug(); 
       } while ((enterPressed == false && (DadosEnsaio.tempo > 0)));
       // fim do controle de MF
 

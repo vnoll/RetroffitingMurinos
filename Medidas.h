@@ -11,6 +11,8 @@
 #define ENTER 35       //Posição Pino Enter
 #define ENCODER_MOTOR_PIN 21
 #define timermaximo 43200
+#define TON 200
+#define TOFF 700
 
 RotaryEncoder encoder(ENCODER_DT, ENCODER_CLK);
 
@@ -26,9 +28,11 @@ float speedkmh = 0.0;
 unsigned long lastTime = micros();
 
 hw_timer_t *timer = NULL;
+hw_timer_t *timer1Velo = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
-void initTimer();               //Função de inicialização do contador
+void initTimer0();               //Função de inicialização do contador de 1s
+void initTimer1Velo();           //Funçaõ de inicializacao do contador pulsos encoder
 void timerRefresh();            //Função de atualização do contador
 void ZeraTimer();               //Função de resetar o contador
 void updateDistancia();         //Função de atualização da distância em relação a velocidade

@@ -20,6 +20,9 @@ int modoManual(int X, char *titulo)
   ZeraTimer();
   ShowTempo(DadosEnsaio.tempo);
 
+  unsigned long periodoControle = millis();
+  unsigned long periodoAtualControle = 0;
+
   do
   {
     escolheComandoManual();
@@ -32,7 +35,6 @@ int modoManual(int X, char *titulo)
       comando = PARAR;
       ShowOpcoes();
       timerRestart(timer);
-
       // Inicialização do controle da esteira
       do
       {
@@ -40,10 +42,18 @@ int modoManual(int X, char *titulo)
         ShowTempo(DadosEnsaio.tempo);
         showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
         showDistancia(DadosEnsaio.distanciaAcumulada);
-
         showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
-        updateVelocidadeEsteira();
-        
+
+        // atualiza o controle da velocidade a cada 50 ms
+        // esse valor foi determinado experimentalmente. Nao mexa. 
+        // a velocidade é medida a cada 100ms pelo timer1
+        periodoAtualControle = millis();
+        if ((periodoAtualControle-periodoControle)>50)
+        {
+          updateVelocidadeEsteira();
+          periodoControle = periodoAtualControle;
+        }       
+               
         encoder.tick();
         newPos = encoder.getPosition();
         if (pos != newPos)
@@ -51,7 +61,6 @@ int modoManual(int X, char *titulo)
           configVelocidade();
           //showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
         }      
-
       } while ((enterPressed == false && comando != VOLTAR));
 
       // Fim do controle
