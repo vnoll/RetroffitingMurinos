@@ -12,6 +12,12 @@ int modoManual(int X, char *titulo)
   DadosEnsaio.tempo = 0;
   DadosEnsaio.config_velocidade = 0.5;
 
+  primeiravez_showDistancia = true; //Flag primeiravez
+  primeiravez_showVelocidadeReal = true;
+  primeiravez_showVelocidadeDefinida = true;
+  primeiravez_ShowTempoConfig = true;
+  primeiravez_ShowTempo = true;
+
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
   tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
@@ -20,8 +26,9 @@ int modoManual(int X, char *titulo)
   ZeraTimer();
   ShowTempo(DadosEnsaio.tempo);
 
-  unsigned long periodoControle = millis();
-  unsigned long periodoAtualControle = 0;
+  unsigned long periodoControle = 0;
+  unsigned long periodoToShow = 0;
+  Serial.println("Tempo(s), Velocidade Definida(km/h),Velocidade Real (km/h),Distancia percorrida (m)");
 
   do
   {
@@ -35,25 +42,32 @@ int modoManual(int X, char *titulo)
       comando = PARAR;
       ShowOpcoes();
       timerRestart(timer);
+      periodoToShow = millis();
+      periodoControle = millis();
+      
       // Inicialização do controle da esteira
       do
       {
         DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
-        ShowTempo(DadosEnsaio.tempo);
-        showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-        showDistancia(DadosEnsaio.distanciaAcumulada);
-        showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
 
         // atualiza o controle da velocidade a cada 50 ms
         // esse valor foi determinado experimentalmente. Nao mexa. 
         // a velocidade é medida a cada 100ms pelo timer1
-        periodoAtualControle = millis();
-        if ((periodoAtualControle-periodoControle)>50)
+        if ((millis()-periodoControle)>50)
         {
           updateVelocidadeEsteira();
-          periodoControle = periodoAtualControle;
-        }       
-               
+          periodoControle = millis();
+        }
+        if ((millis()-periodoToShow)>300)
+            {
+              ShowTempo(DadosEnsaio.tempo);
+              showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+              showDistancia(DadosEnsaio.distanciaAcumulada);
+              showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+              periodoToShow = millis();
+              PrintDataSERIAL4Debug();
+            }
+              
         encoder.tick();
         newPos = encoder.getPosition();
         if (pos != newPos)
@@ -70,7 +84,7 @@ int modoManual(int X, char *titulo)
       enterPressed = false;
       DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
       ShowTempo(DadosEnsaio.tempo);
-      comando = INICIAR;
+      comando = PARAR;
       ZeraTimer();
       break;
 

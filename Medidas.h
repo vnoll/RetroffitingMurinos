@@ -36,12 +36,9 @@ void initTimer1Velo();           //Funçaõ de inicializacao do contador pulsos 
 void timerRefresh();            //Função de atualização do contador
 void ZeraTimer();               //Função de resetar o contador
 void updateDistancia();         //Função de atualização da distância em relação a velocidade
-void updateVelocidadeEsteira(); //Função de controle de velocidade da esteira
-void updateTask_Velocidade();   //Função de atualização e recebimento da velocidade atual através do Nano
+int updateVelocidadeEsteira(); //Função de controle de velocidade da esteira
+//void updateTask_Velocidade();   //Função de atualização e recebimento da velocidade atual através do Nano
 void onOff();                   //Função de ligar e desligar o relé de acionamento
 void encoderPinoB();
-
-
-
 
 #endif

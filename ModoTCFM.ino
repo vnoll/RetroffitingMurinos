@@ -1,6 +1,4 @@
 
-
-
 int modoTCFM(int X, char *titulo)
 {
   // valor real
@@ -31,8 +29,16 @@ int modoTCFM(int X, char *titulo)
   DadosEnsaio.config_velocidade = 0.5;
   DadosEnsaio.config_tempo = 0;
 
+  primeiravez_showDistancia = true; //Flag primeiravez
+  primeiravez_showVelocidadeReal = true;
+  primeiravez_showVelocidadeDefinida = true;
+  primeiravez_ShowTempoConfig = true;
+  primeiravez_ShowTempo = true;
+
   ZeraTimer();
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+
+  tft.fillRoundRect(386, 56, 78, 53, 8, LGREEN);
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
   showDistancia(DadosEnsaio.distanciaAcumulada);
   timerStop(timer);
@@ -42,6 +48,10 @@ int modoTCFM(int X, char *titulo)
   ShowTempo(DadosEnsaio.config_tempo);
 
   ZeraTimer();
+  unsigned long periodoControle = 0;
+  unsigned long periodoToShow = 0;
+  Serial.println("Tempo(s), Velocidade Definida(km/h),Velocidade Real (km/h),Distancia percorrida (m)");
+ 
   do
   {
     ShowOpcoes();
@@ -55,21 +65,31 @@ int modoTCFM(int X, char *titulo)
       comando = PARAR;
       ShowOpcoes();
       timerRestart(timer);
+      periodoToShow = millis();
+      periodoControle = millis();
+      
 
       // Início do controle de velocidade
       do
       {
-
         DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
-        ShowTempo(DadosEnsaio.tempo);
-        showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-        showDistancia(DadosEnsaio.distanciaAcumulada);
-        updateVelocidadeEsteira();
-
+        
+        if ((millis()-periodoControle)>50)
+        {
+          updateVelocidadeEsteira();
+          periodoControle = millis();
+        }
+        if ((millis()-periodoToShow)>300)
+            {
+              ShowTempo(DadosEnsaio.tempo);
+              showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+              showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+              showDistancia(DadosEnsaio.distanciaAcumulada);
+              periodoToShow = millis();
+              PrintDataSERIAL4Debug();
+            }
         tempoEnsaio = DadosEnsaio.tempo;
-
-        PrintDataSERIAL4Debug();    
-             
+         
         if (flag_entrou == 0)
         {
           if (tempoEnsaio != tempoEnsaioAnterior) flag_entrou = 1;
@@ -85,14 +105,15 @@ int modoTCFM(int X, char *titulo)
           }
           tempoEnsaioAnterior = tempoEnsaio;
           DadosEnsaio.config_velocidade += 0.1;
+
           //DadosEnsaio.velocidade = DadosEnsaio.config_velocidade;
-          updateVelocidadeEsteira();
+          //updateVelocidadeEsteira();
           //ShowVelocidade();
-          DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
-          ShowTempo(DadosEnsaio.tempo);
-          showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-          showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
-          showDistancia(DadosEnsaio.distanciaAcumulada);
+          // DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
+          //ShowTempo(DadosEnsaio.tempo);
+          //showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+          //showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
+          //showDistancia(DadosEnsaio.distanciaAcumulada);
         }
 
       } while ((enterPressed == false && (DadosEnsaio.velocidade <= 5.0)));
@@ -101,19 +122,19 @@ int modoTCFM(int X, char *titulo)
       timerStop(timer);
       enterPressed = false;
       DadosEnsaio.tempo = DadosEnsaio.config_tempo + interruptCounter1s;
-      if (DadosEnsaio.tempo <= 10000)
-      {
+      //if (DadosEnsaio.tempo <= 10000)
+      //{
         flagFuncionamento = false;
         flagOn = false;
         onOff();
         ShowTempo(DadosEnsaio.tempo);
-        comando = VOLTAR;
-        ShowOpcoes();
-        escolheComandoTCFM();
-        return 1;
-      }
-      ShowTempo(DadosEnsaio.tempo);
-      comando = INICIAR;
+        //comando = VOLTAR;
+        //ShowOpcoes();
+        //escolheComandoTCFM();
+        //return 1;
+      //}
+      //ShowTempo(DadosEnsaio.tempo);
+      comando = PARAR;
       break;
 
     case VOLTAR:

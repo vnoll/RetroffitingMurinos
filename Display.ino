@@ -14,15 +14,14 @@ void showDistanciaOld(float distancia) //Mostra a distância
 }
 
 void showDistancia(float distancia) //Função de atualização da distância display
-{
-  static bool primeiravez = true; //Flag primeiravez
+{  
   static float oldDistanciatotal = 0;
   updateDistancia();
-  if (primeiravez)
+  if (primeiravez_showDistancia)
   {
     showdist(317, 165, 1, BLACK, &FreeSansBold18pt7b, distancia);
     oldDistanciatotal = distancia;
-    primeiravez = false;
+    primeiravez_showDistancia = false;
   }
   if (oldDistanciatotal != distancia)
   {
@@ -33,16 +32,15 @@ void showDistancia(float distancia) //Função de atualização da distância di
 }
 
 void showVelocidadeReal(int x, int y, float vel) //Função atualização velocidade display
-{
-  static bool primeiravez = true;
+{  
   static float oldvelocidade;
-  if (primeiravez)
+  if (primeiravez_showVelocidadeReal)
   {
     showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
     oldvelocidade = vel;
-    primeiravez = false;
+    primeiravez_showVelocidadeReal = false;
   }
-  if (vel != oldvelocidade && primeiravez == false)
+  if (vel != oldvelocidade && primeiravez_showVelocidadeReal == false)
   {
     showfloat(x, y, 1, GELO, &FreeSansBold18pt7b, oldvelocidade);
     showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
@@ -50,17 +48,17 @@ void showVelocidadeReal(int x, int y, float vel) //Função atualização veloci
   }
 }
 
+
 void showVelocidadeDefinida(int x, int y, float vel) //Função atualização velocidade configurada display
 {
-  static float oldvelocidade;
-  static bool primeiravez = true;
-  if (primeiravez)
+  static float oldvelocidade;  
+  if (primeiravez_showVelocidadeDefinida)
   {
     showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
     oldvelocidade = vel;
-    primeiravez = false;
+    primeiravez_showVelocidadeDefinida = false;
   }
-  if (vel != oldvelocidade && primeiravez == false)
+  if (vel != oldvelocidade && primeiravez_showVelocidadeDefinida == false)
   {
     showfloat(x, y, 1, LGREEN, &FreeSansBold18pt7b, oldvelocidade);
     showfloat(x, y, 1, BLACK, &FreeSansBold18pt7b, vel);
@@ -144,6 +142,7 @@ void showTelaModoTCFM(int X, char *titulo)
 {
   tft.fillScreen(KHAKI);                       //LIMPA A TELA
   tft.drawRoundRect(80, 5, 315, 45, 10, GREY); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(81, 6, 313, 43, 8, LGREEN);
   showmsgf(105 + X, 40, 1, BLACK, &FreeSansBold18pt7b, "MODO ", titulo);
 
   tft.drawRoundRect(20, 55, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
@@ -151,6 +150,8 @@ void showTelaModoTCFM(int X, char *titulo)
   showmsg(35, 90, 1, BLACK, &FreeSansBold12pt7b, "VELOCIDADE (Km/h):");
   tft.drawRoundRect(305, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(306, 56, 78, 53, 8, GELO);
+  tft.drawRoundRect(385, 55, 80, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
+  tft.fillRoundRect(386, 56, 78, 53, 8, GELO);
 
   tft.drawRoundRect(20, 125, 275, 55, 10, tft.color565(0, 0, 0)); // (x, y, largura, altura, arredondamento)
   tft.fillRoundRect(21, 126, 273, 53, 8, GELO);
@@ -209,7 +210,7 @@ void ShowTempoConfig(long TEMPOTOTAL)
   long seg1, seg2;
   long min1, min2;
   long hora1, hora2;
-  static bool primeiravez = true;
+  
   static long oldseg1 = 0, oldseg2 = 0;
   static long oldmin1 = 0, oldmin2 = 0;
   static long oldhora1 = 0, oldhora2 = 0;
@@ -232,7 +233,7 @@ void ShowTempoConfig(long TEMPOTOTAL)
   Serial.println(seg1);
   */
 
-  if (primeiravez)
+  if (primeiravez_ShowTempoConfig)
   {
     showtempo(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
     showtempo(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
@@ -249,10 +250,10 @@ void ShowTempoConfig(long TEMPOTOTAL)
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-    primeiravez = false;
+    primeiravez_ShowTempoConfig = false;
   }
 
-  if (((min1 != oldmin1) || (min2 != oldmin2)) && (primeiravez == false))
+  if (((min1 != oldmin1) || (min2 != oldmin2)) && (primeiravez_ShowTempoConfig == false))
   {
     // apaga os numeros anteriores somente se nao for a primeira vez
     showtempo(435, 235, 1, LGREEN, &FreeSansBold18pt7b, oldseg1);
@@ -358,7 +359,7 @@ void ShowTempoOld(long numinter)
 
 void ShowTempo(long numinter)
 {
-  static bool primeiravez = true;
+  
   int seg1, seg2;
   int min1, min2;
   int hora1, hora2;
@@ -373,7 +374,7 @@ void ShowTempo(long numinter)
   hora1 = ((numinter / 3600) % 10);
   hora2 = ((numinter / 3600) / 10);
 
-  if (primeiravez == true)
+  if (primeiravez_ShowTempo == true)
   {
     showint(435, 235, 1, BLACK, &FreeSansBold18pt7b, seg1);
     showint(415, 235, 1, BLACK, &FreeSansBold18pt7b, seg2);
@@ -390,10 +391,10 @@ void ShowTempo(long numinter)
     oldmin2 = min2;
     oldhora1 = hora1;
     oldhora2 = hora2;
-    primeiravez = false;
+    primeiravez_ShowTempo = false;
   }
 
-  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez == false))
+  if (((seg1 != oldseg1) || (seg2 != oldseg2)) && (primeiravez_ShowTempo == false))
   {
     // apaga os numeros anteriores somente se nao for a primeira vez
     showint(435, 235, 1, GELO, &FreeSansBold18pt7b, oldseg1);
@@ -485,32 +486,29 @@ void showAbertura()
   tft.drawFastHLine(60, 45, 355, BLACK);
   showmsg(90, 80, 1, BLACK, &FreeSerifBold18pt7b, "ERGOMETRICOS");
   tft.drawFastHLine(90, 85, 290, BLACK);
-  showmsg(107, 120, 1, BLACK, &FreeSerifBold18pt7b, "PARA ANIMAIS");
+  showmsg(107, 120, 1, BLACK, &FreeSerifBold18pt7b, "PARA MURINOS");
   tft.drawFastHLine(107, 125, 260, BLACK);
   showmsg(110, 160, 1, BLACK, &FreeSerif18pt7b, "Desenvolvido pelo ");
   showmsg(55, 200, 1, BLACK, &FreeSerif18pt7b, "IFSC - Mecatronica - FLN");
-  showmsg(250, 310, 1, BLACK, &FreeSerifBold18pt7b, "UDESC/2020");
+  showmsg(250, 310, 1, BLACK, &FreeSerifBold18pt7b, "UDESC/2023");
   showmsg(40, 240, 1, BLACK, &FreeSerifBold12pt7b, "Edwan Seiki Kuwakino");
   showmsg(40, 260, 1, BLACK, &FreeSerifBold12pt7b, "Leonardo Goncalves Rosa");
-  showmsg(40, 280, 1, BLACK, &FreeSerifBold12pt7b, "Lucas Terres Hoffmann");
+  showmsg(40, 280, 1, BLACK, &FreeSerifBold12pt7b, "Deborah Kunzler");
   showmsg(40, 300, 1, BLACK, &FreeSerifBold12pt7b, "Valdir Noll");
   delay(5000);
 }
 
-// enviar sequencialmente LABEL,Hora,Velocidade Definida(km/h),Velocidade Real (km/h),Distancia (m),Tempo (s)
+// enviar sequencialmente Velocidade Definida(km/h),Velocidade Real (km/h),Distancia (m),Tempo (s)
 void PrintDataSERIAL4Debug()
 {
-    static long tempo = interruptCounter1s;
-    static long tempo_anterior = 0;
-    if ((tempo != 0) && (tempo != tempo_anterior))
+    static int tempo_anterior = 0;
+    if ((interruptCounter1s != 0) && (interruptCounter1s != tempo_anterior))
     {
-      /*
+      Serial.print(DadosEnsaio.tempo);Serial.print(',');
       Serial.print(DadosEnsaio.config_velocidade);Serial.print(',');
       Serial.print(DadosEnsaio.velocidade);Serial.print(',');
-      Serial.print(DadosEnsaio.distanciaAcumulada);Serial.print(',');
-      Serial.println(DadosEnsaio.tempo);
-      */
-      tempo_anterior = tempo;
+      Serial.println(DadosEnsaio.distanciaAcumulada);            
+      tempo_anterior = interruptCounter1s;
     }
 }
 

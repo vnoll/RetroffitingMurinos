@@ -62,10 +62,9 @@ void ZeraTimer()
   DadosEnsaio.distancia1s = 0;
 }
 
-/*
 int updateVelocidadeEsteira()
 {
-  float histerese = 0.1;
+  float histerese = 0.05;
   if (DadosEnsaio.velocidade < (DadosEnsaio.config_velocidade-histerese))
   {
     digitalWrite(maisVelo, HIGH);
@@ -88,7 +87,7 @@ int updateVelocidadeEsteira()
   }
   
 }
-*/
+
 
 /*
 int updateVelocidadeEsteira()
@@ -151,11 +150,12 @@ int updateVelocidadeEsteira()
 }
 */
 
+/*
 void updateVelocidadeEsteira()
 {
   float offset = 0.10;
   float offset2 = 0.05;
-  float _erro = 0.50;
+  float _erro = 0.80;
 
   if ((DadosEnsaio.velocidade >= DadosEnsaio.config_velocidade - offset2) && (DadosEnsaio.velocidade <= DadosEnsaio.config_velocidade + offset2))
     {
@@ -212,6 +212,7 @@ void updateVelocidadeEsteira()
     }
   }  
 }
+*/
 
 /* Função de atualização da velocidade da esteira em relação com a velocidade atual 
 void updateVelocidadeEsteira()
@@ -443,16 +444,18 @@ void encoderPinoB()
   }  
 }
 */
-
-
 void onOff()
 {
   if (flagOn == true)
   {
     digitalWrite(botaoEmergencia, LOW);
+    delay(100);
+    digitalWrite(botaoEmergencia, LOW);
   }
   if (flagOn == false)
   {
+    digitalWrite(botaoEmergencia, HIGH);
+    delay(100);
     digitalWrite(botaoEmergencia, HIGH);
   }
 }

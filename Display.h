@@ -42,6 +42,14 @@ MCUFRIEND_kbv tft;
 #define TFT_MAXX 469
 #define TFT_MAXY 309
 
+
+// variaveis globais deste modulo
+bool primeiravez_showDistancia = true; //Flag primeiravez
+bool primeiravez_showVelocidadeReal = true;
+bool primeiravez_showVelocidadeDefinida = true;
+bool primeiravez_ShowTempoConfig = true;
+bool primeiravez_ShowTempo = true;
+
 // Funções do Display
 /*************************/
 void showDistanciaOld();                              //Função distancia inicial

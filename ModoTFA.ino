@@ -14,6 +14,12 @@ int modoTFA(int X, char *titulo)
   DadosEnsaio.config_velocidade = 0.5;
   DadosEnsaio.config_tempo = 0;
 
+  primeiravez_showDistancia = true; //Flag primeiravez
+  primeiravez_showVelocidadeReal = true;
+  primeiravez_showVelocidadeDefinida = true;
+  primeiravez_ShowTempoConfig = true;
+  primeiravez_ShowTempo = true;
+
   ShowTempoConfig(DadosEnsaio.config_tempo);
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
@@ -23,12 +29,17 @@ int modoTFA(int X, char *titulo)
   configVelocidadeTFA();
   configTempoTFA();
 
-  // troca a cor para GELO e reescreve o mesmo valor configurado
+  // troca a cor para GELO  no tempo e reescreve o mesmo valor configurado
   tft.fillRoundRect(306, 196, 158, 53, 8, GELO);
   ShowTempo(DadosEnsaio.config_tempo);
   showVelocidadeDefinida(402, 95, DadosEnsaio.config_velocidade);
   showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
   ZeraTimer();
+
+  unsigned long periodoControle = 0;
+  unsigned long periodoToShow = 0;
+  Serial.println("Tempo(s), Velocidade Definida(km/h),Velocidade Real (km/h),Distancia percorrida (m)");
+
   do
   {
     ShowOpcoes();
@@ -47,17 +58,29 @@ int modoTFA(int X, char *titulo)
       showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
       showDistancia(DadosEnsaio.distanciaAcumulada);
 
+      periodoToShow = millis();
+      periodoControle = millis();
+      
       // inicia controle em MF atualizando o valor do actualValueInterruptCounter1
       do
       {
         DadosEnsaio.tempo = DadosEnsaio.config_tempo - interruptCounter1s;
         if (DadosEnsaio.tempo <= 0)
           DadosEnsaio.tempo = 0;
-        ShowTempo(DadosEnsaio.tempo);
-        updateVelocidadeEsteira();
-        showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
-        showDistancia(DadosEnsaio.distanciaAcumulada);
-        PrintDataSERIAL4Debug(); 
+        
+        if ((millis()-periodoControle)>50)
+        {
+          updateVelocidadeEsteira();
+          periodoControle = millis();
+        }
+        if ((millis()-periodoToShow)>300)
+        {
+          ShowTempo(DadosEnsaio.tempo);
+          showVelocidadeReal(322, 95, DadosEnsaio.velocidade);
+          showDistancia(DadosEnsaio.distanciaAcumulada);
+          periodoToShow = millis();
+          PrintDataSERIAL4Debug();
+        }
       } while ((enterPressed == false && (DadosEnsaio.tempo > 0)));
       // fim do controle de MF
 
@@ -76,7 +99,7 @@ int modoTFA(int X, char *titulo)
         return 1;
       }
       ShowTempo(DadosEnsaio.tempo);
-      comando = INICIAR;
+      comando = PARAR;
       flagOn = false;
       onOff();
       break;
