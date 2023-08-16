@@ -33,3 +33,22 @@ Arduino IDE ultima versão
 - "mcufriend_shield.h" e "mcufriend_special.h" 
 - contidos neste repositório
 
+### PINAGEM FINAL ENTRE LCD E ESP-32
+A montagem final ficou com a seguinte configuração (dentro do arquivo mcufriend_special.h)
+Como a pinagem mudou, foi por isso que mudamos os arquivos "mcufriend_shield.h" e "mcufriend_special.h"
+
+LCD_RD  4  
+LCD_WR  2
+LCD_RS 15 
+LCD_CS 33
+LCD_RST 32
+-
+LCD_D0 12
+LCD_D1 13
+LCD_D2 16
+LCD_D3 17
+LCD_D4 5 
+LCD_D5 26
+LCD_D6 27
+LCD_D7 14
+
