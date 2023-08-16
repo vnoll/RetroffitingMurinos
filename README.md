@@ -18,11 +18,18 @@ Arduino IDE ultima versão
 - WiFi
 
 ### Arquivos
-- Murinos_main.ino
+- Murinos_main_V35.ino
 - Display.ino
 - Medidas.ino
 - MenuPrincipal.ino
 - ModoManual.ino
 - ModoTFA.ino
 - ModoTCFM.ino
+
+### TROCA DE ARQUIVOS
+- A bibliteca de controle do Display LCD ILI9341
+- que é a MCUFRIENDS_kbv, tem 2 arquivos que 
+- devem trocados pelos arquivos:
+- "mcufriend_shield.h" e "mcufriend_special.h" 
+- contidos neste repositório
 

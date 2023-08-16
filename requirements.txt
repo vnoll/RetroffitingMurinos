@@ -21,3 +21,7 @@ CPU frequency: 80 MHZ (WiFI/BT)
 Flash frequency: 40 MHZ
 Flash Mode: QIO
 Flash Size: 4MB(32MB)
+
+ATENÇÃO
+=======
+A bibliteca de controle do Display LCD ILI9341, que é a MCUFRIENDS_kbv, tem 2 arquivos que devem trocados pelos arquivos "mcufriend_shield.h" e "mcufriend_special.h" contidos neste repositório.
